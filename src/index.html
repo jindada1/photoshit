@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    Well hey there!!!
-  </body>
+    <title>iview example</title>
+    <link rel="stylesheet" type="text/css" href="./cdn/iview.css">
+    <script type="text/javascript" src="./cdn/vue.min.js"></script>
+    <script type="text/javascript" src="./cdn/iview.min.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <i-button @click="show">Click me!</i-button>
+    <Modal :visible.sync="visible" title="Welcome">欢迎使用 iView</Modal>
+</div>
+
+<script type="text/javascript" src="./renderer/index.js"></script>
+</body>
 </html>
