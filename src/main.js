@@ -14,6 +14,9 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   // and load the index.html of the app.
@@ -29,6 +32,12 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  // 监听窗口大小更改
+  mainWindow.on('resize', () => {
+    let sizedata = mainWindow.getContentBounds();
+    mainWindow.webContents.send('window-resized', sizedata);
+  })
 };
 
 // This method will be called when Electron has finished

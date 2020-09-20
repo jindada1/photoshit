@@ -5,27 +5,24 @@
     <meta charset="utf-8">
     <title>iview example</title>
     <link rel="stylesheet" type="text/css" href="./cdn/element-ui/element.css">
+    <link rel="stylesheet" type="text/css" href="./renderer/index/index.css">
 </head>
 
 <body>
     <div id="app">
-        <div style="margin-bottom: 20px;">
-            <el-button size="small" @click="addTab(editableTabsValue)">
-                add tab
-            </el-button>
-        </div>
-        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
-            <el-tab-pane v-for="(item, index) in editableTabs" :key="item.name" :label="item.title" :name="item.name">
-                {{item.content}}
-            </el-tab-pane>
-        </el-tabs>
+        <ps-tabs></ps-tabs>
     </div>
-
 </body>
 <!-- import Vue before Element -->
 <script src="./cdn/vue.js"></script>
 <!-- import JavaScript -->
 <script src="./cdn/element-ui/element.js"></script>
+
+<!-- import components -->
+<script src="./renderer/components/window.js"></script>
+<script src="./renderer/components/tabs.js"></script>
+
 <!-- render process -->
-<script type="text/javascript" src="./renderer/index.js"></script>
+<script type="text/javascript" src="./renderer/index/index.js"></script>
+
 </html>
