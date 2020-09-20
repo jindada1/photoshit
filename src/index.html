@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>iview example</title>
-    <link rel="stylesheet" type="text/css" href="./cdn/iview.css">
-    <script type="text/javascript" src="./cdn/vue.min.js"></script>
-    <script type="text/javascript" src="./cdn/iview.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./cdn/element-ui/element.css">
 </head>
 
 <body>
-<div id="app">
-    <i-button @click="show">Click me!</i-button>
-    <Modal :visible.sync="visible" title="Welcome">欢迎使用 iView</Modal>
-</div>
+    <div id="app">
+        <div style="margin-bottom: 20px;">
+            <el-button size="small" @click="addTab(editableTabsValue)">
+                add tab
+            </el-button>
+        </div>
+        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
+            <el-tab-pane v-for="(item, index) in editableTabs" :key="item.name" :label="item.title" :name="item.name">
+                {{item.content}}
+            </el-tab-pane>
+        </el-tabs>
+    </div>
 
-<script type="text/javascript" src="./renderer/index.js"></script>
 </body>
+<!-- import Vue before Element -->
+<script src="./cdn/vue.js"></script>
+<!-- import JavaScript -->
+<script src="./cdn/element-ui/element.js"></script>
+<!-- render process -->
+<script type="text/javascript" src="./renderer/index.js"></script>
 </html>
