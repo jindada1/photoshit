@@ -8,5 +8,7 @@ new Vue({
     },
     methods: {
         
+    },
+    mounted() {
     }
 })

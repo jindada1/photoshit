@@ -1,8 +1,29 @@
-html, body {
+html,
+body {
     height: 100%;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 body {
     margin: 0;
+}
+
+#app {
+    height: 100%;
+}
+
+.ps-window-panels {
+    height: 100%;
+}
+
+.el-carousel__container {
+    height: 100%;
+}
+
+.el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
 }
