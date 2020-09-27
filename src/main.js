@@ -1,4 +1,7 @@
 import { app, BrowserWindow, Menu } from 'electron';
+const path = require('path')
+const url = require('url')
+
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -24,8 +27,7 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -66,3 +68,26 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+const ipc = require('electron').ipcMain
+
+let createCanvasWin = null;
+
+ipc.on('add', () => {
+  if (createCanvasWin) return;
+  createCanvasWin = new BrowserWindow({
+    width: 400,
+    height: 400,
+    frame: false,
+    movable: false,
+    parent: mainWindow, //win是主窗口
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+  createCanvasWin.loadURL(path.join('file:', __dirname, 'subwindow/create_canvas.html')); //new.html是新开窗口的渲染进程
+  createCanvasWin.on('closed', () => { createCanvasWin = null })
+  
+  createCanvasWin.webContents.openDevTools();
+})

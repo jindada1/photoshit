@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>创建新画布</title>
+    <link rel="stylesheet" type="text/css" href="../cdn/element-ui/element.css">
+</head>
+<style>
+    .ps-dialog__header {
+        padding: 20px 20px 10px;
+        display: flex;
+        align-items: baseline;
+    }
+
+    .ps-dialog__title {
+        line-height: 24px;
+        font-size: 18px;
+        color: #303133;
+        flex: 1;
+    }
+
+    .ps-dialog__titlebtn {
+        border: none;
+        padding: 12px 0;
+    }
+
+    .ps-dialog__body {
+        padding: 30px 20px;
+        color: #606266;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    .ps-dialog__footer {
+        padding: 10px 20px 20px;
+        text-align: right;
+        box-sizing: border-box;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <div class="ps-dialog__header">
+            <span class="ps-dialog__title">创建新画布</span>
+            <el-button class="ps-dialog__titlebtn" plain icon="el-icon-close" @click="close"></el-button>
+        </div>
+        <div class="ps-dialog__body">
+            <el-form ref="newDialogForm" :model="canvas" label-width="40px">
+                <el-form-item label="名称">
+                    <el-input v-model="canvas.name"></el-input>
+                </el-form-item>
+                <el-form-item label="大小">
+                    <el-col :span="9">
+                        <el-input v-model="canvas.width" :onkeyup="this.numberFilter()"></el-input>
+                    </el-col>
+                    <el-col style="text-align: center;" :span="2">px</el-col>
+                    <el-col style="text-align: center;" :span="2">-</el-col>
+                    <el-col :span="9">
+                        <el-input v-model="canvas.height" :onkeyup="this.numberFilter()"></el-input>
+                    </el-col>
+                    <el-col style="text-align: center;" :span="2">px</el-col>
+                </el-form-item>
+                <el-form-item>
+                    <el-switch active-text="锁定纵横比" v-model="canvas.rateLocked"></el-switch>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="ps-dialog__footer">
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="close">取 消</el-button>
+                <el-button type="primary" @click="createNew">确 定</el-button>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="../cdn/vue.js"></script>
+<!-- import JavaScript -->
+<script src="../cdn/element-ui/element.js"></script>
+
+<script>
+    const { remote } = require('electron');
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                newDialogVisible: true,
+                canvas: {
+                    name: "",
+                    width: "",
+                    height: "",
+                    rateLocked: false
+                }
+            }
+        },
+        methods: {
+            //关闭
+            close() {
+                remote.getCurrentWindow().close();
+            },
+            numberFilter(e) {
+                this.canvas.width = this.canvas.width.replace(/[^\d.]/g, '');
+                this.canvas.height = this.canvas.height.replace(/[^\d.]/g, '')
+            },
+            createNew() {
+                
+            }
+        },
+        mounted() {
+        }
+    })
+</script>
+
+</html>
