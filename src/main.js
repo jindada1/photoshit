@@ -79,8 +79,8 @@ ipc.on('add', () => {
     width: 400,
     height: 400,
     frame: false,
-    movable: false,
-    parent: mainWindow, //win是主窗口
+    parent: mainWindow,
+    movable: true,
     resizable: false,
     webPreferences: {
       nodeIntegration: true
@@ -90,4 +90,8 @@ ipc.on('add', () => {
   createCanvasWin.on('closed', () => { createCanvasWin = null })
   
   createCanvasWin.webContents.openDevTools();
+})
+
+ipc.on('create-canvas', (event, arg) => {
+  mainWindow.webContents.send( 'add-canvas', arg );
 })

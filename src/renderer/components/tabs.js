@@ -68,5 +68,10 @@ Vue.component('ps-tabs', {
         ipcRenderer.on('window-resized', (event, bound) => {
             that.height = bound.height;
         })
+        
+        ipcRenderer.on('add-canvas', (event, arg) => {
+            console.log(arg);
+        })
+        
     }
 })
