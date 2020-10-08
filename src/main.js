@@ -27,7 +27,7 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -88,8 +88,6 @@ ipc.on('add', () => {
   })
   createCanvasWin.loadURL(path.join('file:', __dirname, 'subwindow/create_canvas.html')); //new.html是新开窗口的渲染进程
   createCanvasWin.on('closed', () => { createCanvasWin = null })
-
-  createCanvasWin.webContents.openDevTools();
 })
 
 ipc.on('create-canvas', (event, arg) => {
@@ -109,5 +107,4 @@ ipc.on('open-imagefile', (event, arg) => {
       createCanvasWin.webContents.send('open-image', data.filePaths[0]);
     }
  });;
-
 })

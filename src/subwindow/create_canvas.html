@@ -5,76 +5,8 @@
     <meta charset="utf-8">
     <title>创建新作品</title>
     <link rel="stylesheet" type="text/css" href="../cdn/element-ui/element.css">
+    <link rel="stylesheet" type="text/css" href="../subwindow/css/subwindow.css">
 </head>
-<style>
-    .ps-dialog__header {
-        padding: 20px 20px 10px;
-        display: flex;
-        align-items: baseline;
-        -webkit-app-region: drag;
-    }
-
-    .ps-dialog__title {
-        line-height: 24px;
-        font-size: 18px;
-        color: #303133;
-        flex: 1;
-    }
-
-    .ps-dialog__titlebtn {
-        border: none;
-        padding: 0;
-        -webkit-app-region: no-drag;
-    }
-
-    .ps-dialog__body {
-        padding: 0 20px;
-        color: #606266;
-        font-size: 14px;
-        word-break: break-all;
-        height: 370px;
-    }
-
-    .ps-dialog__footer {
-        padding: 10px 20px 20px;
-        text-align: right;
-        box-sizing: border-box;
-    }
-
-    .el-form-item {
-        margin-bottom: 12px;
-    }
-
-    .el-input-group__append {
-        background-color: white;
-        color: black;
-        width: 50px;
-    }
-
-    .el-tabs__content {
-        height: 310px;
-        overflow-y: auto;
-    }
-
-    .el-tabs__content::-webkit-scrollbar {
-        width: 0px;
-    }
-
-    #dropZone {
-        height: 200px;
-        text-align: center;
-        border-radius: 4px;
-        border: #9e9e9e 2px dashed;
-        line-height: 200px;
-    }
-
-    .ps-center-img {
-        max-width: 100%;
-        max-height: 100%;
-        vertical-align: middle;
-        display: inline-block;
-    }
-</style>
 
 <body>
     <div id="app">
@@ -85,18 +17,18 @@
         <div class="ps-dialog__body">
             <el-tabs v-model="createType">
                 <el-tab-pane label="画板" name="board">
-                    <el-form ref="canvasConfigForm" :model="canvas" label-position="left" label-width="80px"
+                    <el-form :rules="rules" :model="canvas" ref="canvasConfig" label-position="left" label-width="80px"
                         hide-required-asterisk>
                         <el-divider content-position="center">尺寸</el-divider>
-                        <el-form-item label="水平长度">
-                            <el-input placeholder="请输入画布长度" v-model="canvas.width" :onkeyup="this.numberFilter()">
+                        <el-form-item label="水平宽度" prop="width">
+                            <el-input placeholder="请输入画布宽度" v-model="canvas.width" :onkeyup="this.numberFilter()">
                                 <el-select v-model="canvas.unit" placeholder="单位" slot="append">
                                     <el-option v-for="unit in units" :key="unit" :label="unit" :value="unit">
                                     </el-option>
                                 </el-select>
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="竖直高度">
+                        <el-form-item label="竖直高度" prop="height">
                             <el-input placeholder="请输入画布高度" v-model="canvas.height" :onkeyup="this.numberFilter()">
                                 <el-select v-model="canvas.unit" placeholder="单位" slot="append">
                                     <el-option v-for="unit in units" :key="unit" :label="unit" :value="unit">
@@ -121,16 +53,17 @@
                         <img v-else :src="image.path" class="ps-center-img">
                     </div>
                     <div style="margin: 10px 0;">
-                        <el-button @click="openBrowser" type="primary" icon="el-icon-folder-opened" plain>浏览本地文件
+                        <el-button @click="openBrowser" icon="el-icon-folder-opened" plain>浏览本地文件
                         </el-button>
-                        <el-button style="float: right;" type="primary" icon="el-icon-link" plain>从下方链接中导入</el-button>
+                        <el-button @click="openWeb" style="float: right;" icon="el-icon-link" plain>
+                            从下方链接中导入</el-button>
                     </div>
                     <div>
                         <el-input v-model="image.url" placeholder="要导入的图片链接"></el-input>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="模板" name="template">模板</el-tab-pane>
                 <el-tab-pane label="实时上传" name="upload">实时上传</el-tab-pane>
+                <el-tab-pane label="模板" name="template">模板</el-tab-pane>
             </el-tabs>
         </div>
         <div class="ps-dialog__footer">
@@ -146,6 +79,7 @@
 <script src="../cdn/vue.js"></script>
 <!-- import JavaScript -->
 <script src="../cdn/element-ui/element.js"></script>
+<script src="../cdn/axios.min.js"></script>
 
 <script>
     const { remote } = require('electron');
@@ -158,17 +92,28 @@
         upload: 'upload',
     }
 
+    function formatCorrect(format) {
+        return (format == "image/png" || format == "image/jpeg")
+    }
+
     new Vue({
         el: '#app',
         data: function () {
             return {
-                createType: createTypes.image,
+                createType: createTypes.board,
                 canvas: {
-                    width: "",
-                    height: "",
-                    rateLocked: false,
+                    width: '400',
+                    height: '400',
                     unit: 'px',
                     undercolor: '#ffffff',
+                },
+                rules: {
+                    width: [
+                        { required: true, message: '你不输入宽度我很难办呀☝', trigger: 'change' }
+                    ],
+                    height: [
+                        { required: true, message: '你不输入高度搞我心态❓', trigger: 'change' }
+                    ]
                 },
                 units: ['px'],
                 predefineColors: [
@@ -185,7 +130,7 @@
                 ],
                 image: {
                     path: null,
-                    url: null
+                    url: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg'
                 },
             }
         },
@@ -197,6 +142,19 @@
             openBrowser() {
                 ipcRenderer.send('open-imagefile');
             },
+            openWeb() {
+                let self = this;
+                axios.get(this.image.url)
+                    .then(function (response) {
+                        let ctype = response.headers['content-type'];
+                        if (formatCorrect(ctype)) {
+                            self.image.path = self.image.url;
+                        }
+                        else {
+                            self.warn('仅支持 jpeg/png 的图片链接')
+                        }
+                    });
+            },
             loadImage(image) {
                 this.image.path = image;
             },
@@ -204,7 +162,7 @@
                 var dropZone = document.getElementById('dropZone');
                 var originBorder = dropZone.style.border;
                 var highlightBorder = "#1989fa 2px dashed";
-                var _this = this
+                var self = this
 
                 dropZone.addEventListener('dragover', function (evt) {
                     evt.stopPropagation();
@@ -227,8 +185,10 @@
                     var files = evt.dataTransfer.files;
 
                     if (files.length) {
-                        if(files[0].type == "image/jpeg" || files[0].type == "image/png")
-                            _this.loadImage(files[0].path);
+                        if (formatCorrect(files[0].type))
+                            self.loadImage(files[0].path);
+                        else
+                            self.warn('只支持 jpeg/png 格式')
                     }
                 }, false);
             },
@@ -236,43 +196,63 @@
                 this.canvas.width = this.canvas.width.replace(/[^\d.]/g, '');
                 this.canvas.height = this.canvas.height.replace(/[^\d.]/g, '')
             },
-            createboard() {
-                // this.$refs.canvasConfigForm.validate((success, failed) => {
-                //     console.log(success);
-                // });
-                console.log(this.createType)
-                return 1
+            createBoard() {
+
+                let valid = false;
+                this.$refs['canvasConfig'].validate((v) => {
+                    valid = v;
+                });
+
+                if (valid) {
+                    return this.canvas;
+                } else {
+                    return false;
+                }
+            },
+            createImage() {
+                if (this.image.path) {
+                    return this.image;
+                }
+                return false
             },
             createNew() {
                 let result = undefined;
 
                 switch (this.createType) {
                     case createTypes.board:
-                        result = this.createboard()
+                        result = this.createBoard();
                         break;
                     case createTypes.image:
+                        result = this.createImage();
+                        break;
+                    case createTypes.upload:
                         // code block
                         break;
                     case createTypes.template:
-                        // code block
-                        break;
-                    case createTypes.upload:
                         // code block
                         break;
                 }
 
                 if (result) {
                     ipcRenderer.send('create-canvas', result);
-                    self.close();
+                    this.close();
                 }
-                else console.log(result)
+                else
+                    this.warn('你想创建啥？');
+            },
+            warn(text) {
+                this.$message({
+                    message: text,
+                    type: 'warning',
+                    center: true
+                });
             }
         },
         mounted() {
             this.enableDragIn();
-            let _this = this;
+            let self = this;
             ipcRenderer.on('open-image', (event, image) => {
-                _this.loadImage(image);
+                self.loadImage(image);
             })
         }
     })
