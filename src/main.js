@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, dialog } from 'electron';
 const path = require('path')
 const url = require('url')
 
@@ -71,13 +71,13 @@ app.on('activate', () => {
 
 const ipc = require('electron').ipcMain
 
-let createCanvasWin = null;
+let createCanvasWin;
 
 ipc.on('add', () => {
   if (createCanvasWin) return;
   createCanvasWin = new BrowserWindow({
     width: 400,
-    height: 400,
+    height: 512,
     frame: false,
     parent: mainWindow,
     movable: true,
@@ -88,10 +88,26 @@ ipc.on('add', () => {
   })
   createCanvasWin.loadURL(path.join('file:', __dirname, 'subwindow/create_canvas.html')); //new.html是新开窗口的渲染进程
   createCanvasWin.on('closed', () => { createCanvasWin = null })
-  
+
   createCanvasWin.webContents.openDevTools();
 })
 
 ipc.on('create-canvas', (event, arg) => {
-  mainWindow.webContents.send( 'add-canvas', arg );
+  mainWindow.webContents.send('add-canvas', arg);
+})
+
+ipc.on('open-imagefile', (event, arg) => {
+
+  dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{
+      name: 'Images',
+      extensions: ['jpg', 'png']
+    }]
+  }).then((data) => {
+    if (data.filePaths.length) {
+      createCanvasWin.webContents.send('open-image', data.filePaths[0]);
+    }
+ });;
+
 })
