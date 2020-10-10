@@ -19,7 +19,9 @@ Vue.component('ps-tabs', {
                 {
                     name: 'test',
                     title: 'test',
-                    meta: '1231'
+                    meta: {
+                        name: 'test'
+                    }
                 }
             ],
             height: document.body.clientHeight
