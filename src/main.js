@@ -28,6 +28,7 @@ const createWindow = () => {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   mainWindow.webContents.openDevTools();
+  // mainWindow.setMenu(null)
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -106,5 +107,5 @@ ipc.on('open-imagefile', (event, arg) => {
     if (data.filePaths.length) {
       createCanvasWin.webContents.send('open-image', data.filePaths[0]);
     }
- });;
+  });;
 })

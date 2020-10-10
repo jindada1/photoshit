@@ -20,10 +20,24 @@ body {
     height: 100%;
 }
 
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
+.el-tabs__item {
+    height: 30px;
+    line-height: 30px;
+}
+.el-tabs__nav-next, .el-tabs__nav-prev {
+    line-height: 30px;
 }
 
-.el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
+.el-tabs--border-card>.el-tabs__content {
+    padding: 0;
+}
+
+.button-area {
+    flex-basis: 100px;
+    padding: 5px 10px;
+}
+
+.button-area button {
+    width: 100%;
+    margin: 5px 0;
 }

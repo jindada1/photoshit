@@ -3,9 +3,9 @@
 Vue.component('ps-tabs', {
     template: '\
         <div>\
-            <el-tabs v-model="selectedTabName" type="card" @tab-remove="removeTab" @tab-click="tabClicked">\
+            <el-tabs v-model="selectedTabName" type="border-card" @tab-remove="removeTab" @tab-click="tabClicked">\
                 <el-tab-pane :style="{height: paneHeight}" v-for="(item, index) in editableTabs" :key="item.name" :label="item.title" :name="item.name" closable>\
-                    <ps-window/>\
+                    <ps-window :meta-data="item.meta"/>\
                 </el-tab-pane>\
                 <el-tab-pane label="+" name="add"/>\
             </el-tabs>\
@@ -13,12 +13,13 @@ Vue.component('ps-tabs', {
     ',
     data() {
         return {
-            selectedTabName: 'add',
+            selectedTabName: 'test',
             tabIndex: 0,
             editableTabs: [
                 {
                     name: 'test',
-                    title: 'test'
+                    title: 'test',
+                    meta: '1231'
                 }
             ],
             height: document.body.clientHeight
@@ -26,7 +27,7 @@ Vue.component('ps-tabs', {
     },
     computed: {
         paneHeight: function () {
-            return (this.height - 56) + 'px';
+            return (this.height - 30) + 'px';
         }
     },
     methods: {
@@ -37,11 +38,12 @@ Vue.component('ps-tabs', {
         createNew() {
             ipcRenderer.send('add');
         },
-        addTab(tabname) {
+        addTab(meta) {
             let newTabName = ++this.tabIndex + '';
             this.editableTabs.push({
                 title: 'Untitled-' + newTabName,
-                name: newTabName
+                name: newTabName,
+                meta: meta
             });
             this.selectedTabName = newTabName;
         },
@@ -70,7 +72,7 @@ Vue.component('ps-tabs', {
         })
         
         ipcRenderer.on('add-canvas', (event, arg) => {
-            console.log(arg);
+            this.addTab(arg);
         })
         
     }

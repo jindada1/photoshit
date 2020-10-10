@@ -59,7 +59,7 @@
                             从下方链接中导入</el-button>
                     </div>
                     <div>
-                        <el-input v-model="image.url" placeholder="要导入的图片链接"></el-input>
+                        <el-input v-model="imageUrl" placeholder="要导入的图片链接"></el-input>
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="实时上传" name="upload">实时上传</el-tab-pane>
@@ -129,9 +129,9 @@
                     'rgba(255, 255, 255, 0)',
                 ],
                 image: {
-                    path: null,
-                    url: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg'
+                    path: null
                 },
+                imageUrl: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg'
             }
         },
         methods: {
@@ -144,11 +144,11 @@
             },
             openWeb() {
                 let self = this;
-                axios.get(this.image.url)
+                axios.get(this.imageUrl)
                     .then(function (response) {
                         let ctype = response.headers['content-type'];
                         if (formatCorrect(ctype)) {
-                            self.image.path = self.image.url;
+                            self.image.path = self.imageUrl;
                         }
                         else {
                             self.warn('仅支持 jpeg/png 的图片链接')
@@ -197,7 +197,6 @@
                 this.canvas.height = this.canvas.height.replace(/[^\d.]/g, '')
             },
             createBoard() {
-
                 let valid = false;
                 this.$refs['canvasConfig'].validate((v) => {
                     valid = v;
@@ -234,6 +233,7 @@
                 }
 
                 if (result) {
+                    result.type = this.createType;
                     ipcRenderer.send('create-canvas', result);
                     this.close();
                 }

@@ -19,17 +19,10 @@ Vue.component('ps-window', {
                 </el-menu>\
             </div>\
             <div id="dropZone" style="flex-grow: 1; flex-shrink: 1; display: flex;" ref="canvasHolder">\
-                <canvas ref="board" :width="canvasWidth" :height="canvasHeight" style="margin: auto; background-color:gray"></canvas>\
+                <canvas ref="board" :width="canvas.width" :height="canvas.height" style="margin: auto; background-color:gray"></canvas>\
             </div>\
-            <div style="flex: 0 0 200px; display: flex; flex-direction: column;">\
-                <div style="background-color: antiquewhite; flex-basis: 100px;">\
-                    <el-button-group>\
-                        <el-button type="primary" icon="el-icon-edit"></el-button>\
-                        <el-button type="primary" icon="el-icon-share"></el-button>\
-                        <el-button type="primary" icon="el-icon-delete"></el-button>\
-                    </el-button-group>\
-                </div>\
-                <div style="background-color: azure; flex: 1;">\
+            <div style="flex: 0 0 240px; display: flex; flex-direction: column;">\
+                <div style="flex: 1;">\
                     <el-carousel ref="operationPanels" class="ps-window-panels" indicator-position="none" arrow="never" :autoplay="false">\
                         <el-carousel-item>\
                             <h3>基本信息</h3>\
@@ -39,17 +32,52 @@ Vue.component('ps-window', {
                         </el-carousel-item>\
                     </el-carousel>\
                 </div>\
+                <div class="button-area">\
+                    <el-row :gutter="10">\
+                        <el-col :span="12">\
+                            <el-button type="primary" plain icon="el-icon-arrow-left">撤销</el-button>\
+                        </el-col>\
+                        <el-col :span="12">\
+                            <el-button type="primary" plain>恢复<i class="el-icon-arrow-right el-icon--right"></i></el-button>\
+                        </el-col>\
+                    </el-row>\
+                    <el-button type="success" plain>将图片另存为</el-button>\
+                </div>\
             </div>\
         </div>\
         ',
     data() {
         return {
-            canvasWidth: 300,
-            canvasHeight: 300,
-            currentMode: '0'
+            canvas: {
+                width: 300,
+                height: 300,
+            },
+            currentMode: '0',
+            meta: this.metaData
         }
     },
+    props: ['metaData'],
     methods: {
+        // 根据元数据初始化画布
+        initCanvas() {
+            switch (this.meta.type) {
+                case 'board':
+                    this.initFromBoard();
+                    break;
+            
+                case 'image':
+                    
+                    break;
+            
+                default:
+                    break;
+            }
+        },
+        initFromBoard() {
+            this.canvas.width = this.meta.width;
+            this.canvas.height = this.meta.height;
+            
+        },
         // 激活鼠标拖拽文件
         enableDragIn() {
             var dropZone = document.getElementById('dropZone');
@@ -126,7 +154,7 @@ Vue.component('ps-window', {
                 // 把路径移动到画布中的指定点，不创建线条
                 ctx.moveTo(e.clientX - left, e.clientY - top);
                 // 获取当前画布的图像
-                var pic = ctx.getImageData(0, 0, _this.canvasWidth, _this.canvasHeight);
+                var pic = ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height);
                 // 将当前图像存入数组，用于撤销每一笔
                 imgs.push(pic);
                 // ctx.moveTo(e.clientX, e.clientY);
@@ -154,7 +182,7 @@ Vue.component('ps-window', {
             })
 
             // $(".clear").click(function() {
-            //     ctx.clearRect(0, 0, _this.canvasWidth, _this.canvasHeight); //创建一个等大画布覆盖
+            //     ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height); //创建一个等大画布覆盖
             // });
             // $(".reset").click(function() {
             //     if (imgs.length > -1) {
@@ -178,7 +206,8 @@ Vue.component('ps-window', {
         }
     },
     mounted() {
-        this.enableDragIn()
+        this.initCanvas();
+        this.enableDragIn();
         this.modeSelected(this.currentMode);
     }
 })
