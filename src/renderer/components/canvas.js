@@ -27,7 +27,6 @@ Vue.component('ps-canvas', {
             else
                 this.handler = {
                     onMouseDown: (e) => console.log('mousedown'),
-                    onMouseMove: (e) => console.log('mousemove'),
                     onMouseOut: (e) => console.log('mouseout'),
                     onMouseUp: (e) => console.log('mouseup')
                 }
@@ -74,6 +73,7 @@ Vue.component('ps-canvas', {
             let self = this;
 
             board.addEventListener("mousedown", function (e) {
+                if (!self.handler.hasOwnProperty('onMouseDown')) return;
                 // getBoundingClientRect 是会动态变化的，根据渲染来的
                 left = board.getBoundingClientRect().left;
                 top = board.getBoundingClientRect().top;
@@ -81,14 +81,17 @@ Vue.component('ps-canvas', {
             })
 
             board.addEventListener("mousemove", function (e) {
+                if (!self.handler.hasOwnProperty('onMouseMove')) return;
                 self.handler.onMouseMove(e.clientX - left, e.clientY - top, ctx, e)
             });
 
             board.addEventListener("mouseout", function (e) {
+                if (!self.handler.hasOwnProperty('onMouseOut')) return;
                 self.handler.onMouseOut(e.clientX - left, e.clientY - top, ctx, e)
             })
 
             board.addEventListener("mouseup", function (e) {
+                if (!self.handler.hasOwnProperty('onMouseUp')) return;
                 self.handler.onMouseUp(e.clientX - left, e.clientY - top, ctx, e)
             })
 

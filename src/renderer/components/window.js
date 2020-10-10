@@ -19,8 +19,7 @@ Vue.component('ps-window', {
                 <div style="flex: 1;">\
                     <el-carousel ref="operationPanels" class="ps-window-panels" indicator-position="none" arrow="never" :autoplay="false">\
                         <el-carousel-item v-for="tool in tools" :key="tool.name" :name="tool.name">\
-                            <h3>{{ tool.title }}</h3>\
-                            <component :is="tool.name" :name="tool.name"></component>\
+                            <component :is="tool.name" :name="tool.name" :instance="tool.handler"></component>\
                         </el-carousel-item>\
                     </el-carousel>\
                 </div>\
@@ -43,7 +42,8 @@ Vue.component('ps-window', {
             tools: [
                 {
                     'title': '查看',
-                    'name': 'see'
+                    'name': 'see',
+                    'handler': See()
                 },
                 {
                     'title': '画笔',
@@ -52,7 +52,8 @@ Vue.component('ps-window', {
                 },
                 {
                     'title': '裁剪',
-                    'name': 'cut'
+                    'name': 'cut',
+                    'handler': Cut()
                 },
             ],
             currentToolIndex: '0',
