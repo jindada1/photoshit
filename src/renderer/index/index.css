@@ -80,3 +80,25 @@ body {
     background-size: 16px 16px;
     background-position: 0 0, 8px 8px;
 }
+
+.ps-eraser-dot-holder {
+    position: relative;
+    border-radius: 4px;
+    margin: auto;
+    background-color: #409EFF;
+}
+
+.ps-eraser-dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: auto;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.ps-options label{
+    width: 100%;
+    margin-top: 10px;
+}

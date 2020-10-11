@@ -37,8 +37,8 @@ Vue.component("pen", {
     data() {
         return {
             pen: this.instance,
-            color: '#000000',
-            lineWidth: 1,
+            color: '#00ff00',
+            lineWidth: 3,
             maxLineWidth: 40,
             predefineColors: [
                 '#000000',
@@ -64,7 +64,9 @@ Vue.component("pen", {
         }
     },
     mounted() {
-        console.log('pen mounted')
+        // console.log('pen mounted');
+        this.pen.config('strokeStyle', this.color);
+        this.pen.config('lineWidth', this.lineWidth);
     }
 });
 
@@ -81,5 +83,61 @@ Vue.component("eraser", {
         name: String,
         instance: Object,
     },
-    template: '<p>Hello {{name}}</p>'
+    template: '\
+    <div style="padding: 0 15px;">\
+        <el-divider content-position="center">橡皮大小</el-divider>\
+        <div :style="{lineHeight: maxSize + \'px\'}">\
+            <div class="ps-eraser-dot-holder" :style="{width: maxSize + \'px\', height: maxSize + \'px\'}">\
+                <div :style="{width: size + \'px\', height: size + \'px\'}" class="ps-eraser-dot"></div>\
+            </div>\
+        </div>\
+        <el-slider v-model="size" :min="1" :max="maxSize" @change="sizeChanged"></el-slider>\
+        <el-divider content-position="center">橡皮类型</el-divider>\
+        <div class="ps-options">\
+            <div v-for="mode in modes" :key="mode.name">\
+                <el-tooltip :content="mode.tip" effect="dark" placement="left">\
+                    <el-radio @change="modeSelected" v-model="eraserMode" :label="mode.name" border>{{mode.title}}</el-radio>\
+                </el-tooltip>\
+            </div>\
+        </div>\
+    </div>\
+    ',
+    data() {
+        return {
+            eraser: this.instance,
+            size: 10,
+            maxSize: 100,
+            modes: [
+                {
+                    name: "normal",
+                    tip: "擦过的地方保留底色",
+                    title: "普通橡皮",
+                },
+                {
+                    name: "super",
+                    tip: "擦过的地方变透明",
+                    title: "强力橡皮",
+                },
+                {
+                    name: "dot",
+                    tip: "去除擦过地方的斑点",
+                    title: "斑点橡皮",
+                },
+            ],
+            eraserMode: 'normal',
+        }
+    },
+    methods: {
+        sizeChanged(size) {
+            this.eraser.set('lineWidth', size);
+        },
+        modeSelected(mode) {
+            this.eraser.switchMode(mode);
+        }
+    },
+    mounted() {
+        // console.log('eraser mounted');
+        this.eraser.config('lineWidth', this.size);
+        this.eraser.switchMode(this.eraserMode);
+    }
 });

@@ -33,6 +33,8 @@ Vue.component('ps-canvas', {
         },
         init(meta) {
             this.context = this.$refs.board.getContext("2d");
+            // ps 夹带的私货在这里装车（装进 context）
+            this.context['psUnderColor'] = 'rgba(0,0,0,0)';
             switch (meta.type) {
                 case 'board':
                     this.setBoard(meta);
@@ -51,9 +53,10 @@ Vue.component('ps-canvas', {
         setBoard(meta) {
             this.width = meta.width;
             this.height = meta.height;
-            this.undercolor = meta.undercolor;
+            this.context['psUnderColor'] = meta.undercolor;
 
             let self = this;
+            // canvas每当高度或宽度被重设时，画布内容就会被清空，一定要在渲染完成后去操作
             Vue.nextTick(function () {
                 self.clearBoard();
             })
@@ -62,7 +65,7 @@ Vue.component('ps-canvas', {
             console.log(meta)
         },
         clearBoard() {
-            this.context.fillStyle = this.undercolor;
+            this.context.fillStyle = this.context['psUnderColor'];
             this.context.fillRect(0, 0, this.width, this.height);     // 绘制矩形，填充的默认颜色为黑色
         },
         bindEvents() {
@@ -118,6 +121,6 @@ Vue.component('ps-canvas', {
         },
     },
     mounted() {
-        console.log('canvas mounted')
+        // console.log('canvas mounted');
     }
 })

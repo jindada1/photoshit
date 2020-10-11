@@ -128,6 +128,6 @@ Vue.component('ps-window', {
         // 激活拖拽
         this.enableDragIn();
         // 选择模式
-        this.toolSelected('0');
+        this.toolSelected('2');
     }
 })
