@@ -2,13 +2,14 @@
 // tabs窗口
 Vue.component('ps-canvas', {
     template: '\
-        <canvas ref="board" :width="width" :height="height" style="margin: auto;background-color: gray">\
+        <canvas ref="board" :width="width" :height="height" style="margin: auto; box-shadow: 0px 0px 3px 0px gray;">\
         </canvas>\
     ',
     data() {
         return {
             width: 300,
             height: 300,
+            context: null,
             handler: {}
         }
     },
@@ -17,13 +18,12 @@ Vue.component('ps-canvas', {
     },
     methods: {
         setHandler(handler = null) {
-            if (handler)
-            {
+            if (handler) {
                 this.handler = handler;
                 // 初始化 context
-                this.handler.onBind(this.$refs.board.getContext("2d"));
+                this.handler.onBind(this.context);
             }
-                
+
             else
                 this.handler = {
                     onMouseDown: (e) => console.log('mousedown'),
@@ -32,36 +32,47 @@ Vue.component('ps-canvas', {
                 }
         },
         init(meta) {
+            this.context = this.$refs.board.getContext("2d");
             switch (meta.type) {
                 case 'board':
                     this.setBoard(meta);
                     break;
-            
+
                 case 'image':
                     this.setImage(meta);
                     break;
-            
+
                 default:
                     break;
             }
-            // 设置默认事件处理器
-            this.setHandler();
             // 绑定鼠标事件
             this.bindEvents();
         },
         setBoard(meta) {
             this.width = meta.width;
             this.height = meta.height;
+            this.undercolor = meta.undercolor;
+
+            let self = this;
+            Vue.nextTick(function () {
+                self.clearBoard();
+            })
         },
         setImage(meta) {
             console.log(meta)
         },
+        clearBoard() {
+            this.context.fillStyle = this.undercolor;
+            this.context.fillRect(0, 0, this.width, this.height);     // 绘制矩形，填充的默认颜色为黑色
+        },
         bindEvents() {
+            // 设置默认事件处理器
+            this.setHandler();
 
             let board = this.$refs.board;
             // 创建画布上下文
-            var ctx = board.getContext("2d");
-            
+            var ctx = this.context;
+
             // 获取画布的left值
             var left = 0;
             var top = 0;
@@ -103,18 +114,10 @@ Vue.component('ps-canvas', {
             //         ctx.putImageData(imgs.pop(), 0, 0); //删除图像数组最后一位
             //     }
             // })
-            // $(".eraser").click(function() {
-            //     ctx.strokeStyle = "#fff";
-            // });
-            // $(".color").change(function() {
-            //     ctx.strokeStyle = this.value; //改变颜色
-            // });
-            // $(".range").change(function() {
-            //     ctx.lineWidth = this.value; //改变线条粗细
-            // })
 
         },
     },
     mounted() {
+        console.log('canvas mounted')
     }
 })

@@ -1,3 +1,28 @@
+// context = {
+//     globalAlpha: 1,
+//     globalCompositeOperation: "source-over",
+//     filter: "none",
+//     imageSmoothingEnabled: true,
+//     imageSmoothingQuality: "low",
+//     strokeStyle: "#000000",
+//     fillStyle: "#000000",
+//     shadowOffsetX: 0,
+//     shadowOffsetY: 0,
+//     shadowBlur: 0,
+//     shadowColor: "rgba(0, 0, 0, 0)",
+//     lineWidth: 1,
+//     lineCap: "round",
+//     lineJoin: "miter",
+//     miterLimit: 10,
+//     lineDashOffset: 0,
+//     font: "10px sans-serif",
+//     textAlign: "start",
+//     textBaseline: "alphabetic",
+//     direction: "ltr",
+//     lineJion: "round"
+// } 
+
+
 function Pen(config = null) {
 
     var isDown = false;
@@ -17,7 +42,6 @@ function Pen(config = null) {
         },
         onMouseDown: (x, y, ctx, e) => {
             isDown = true;
-            console.log(ctx)
             // 起始/重置一条路径
             context.beginPath();
             // 把路径移动到画布中的指定点，不创建线条
@@ -38,6 +62,35 @@ function Pen(config = null) {
         onMouseUp: (x, y, ctx, e) => {
             // 当鼠标移出画布区域时,创建从当前点回到起始点的路径
             context.closePath();
+            isDown = false;
+        }
+    }
+}
+
+function Eraser(config = null) {
+
+    var isDown = false;
+    var context = null;
+
+    return {
+        onBind: (ctx) => {
+            console.log('橡皮模式');
+            context = ctx;
+        },
+        onMouseDown: (x, y, ctx, e) => {
+            isDown = true;
+        },
+        onMouseMove: (x, y, ctx, e) => {
+            if (isDown) {
+                
+            }
+        },
+        onMouseOut: (x, y, ctx, e) => {
+            
+            isDown = false;
+        },
+        onMouseUp: (x, y, ctx, e) => {
+
             isDown = false;
         }
     }
