@@ -26,7 +26,7 @@ Vue.component('ps-window', {
                 <div class="button-area">\
                     <el-row :gutter="10">\
                         <el-col :span="8">\
-                            <el-tooltip effect="dark" content="撤销上一步" placement="top-start">\
+                            <el-tooltip effect="dark" content="撤销" placement="top-start">\
                                 <el-button plain icon="el-icon-back" />\
                             </el-tooltip>\
                         </el-col>\
@@ -122,12 +122,12 @@ Vue.component('ps-window', {
         },
     },
     mounted() {
-        console.log('window mounted')
+        // console.log('window mounted');
         // 初始化画布
         this.$refs.canvas.init(this.meta)
         // 激活拖拽
         this.enableDragIn();
         // 选择模式
-        this.toolSelected('2');
+        this.toolSelected('0');
     }
 })

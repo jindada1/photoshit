@@ -20,7 +20,7 @@ Vue.component('ps-tabs', {
                     name: 'test',
                     title: 'test',
                     meta: {
-                        width: 400,
+                        width: 360,
                         height: 300,
                         type: 'board',
                         undercolor: "#ffffff"
@@ -71,7 +71,7 @@ Vue.component('ps-tabs', {
         }
     },
     mounted() {
-        console.log('tabs mounted')
+        // console.log('tabs mounted');
         
         ipcRenderer.on('window-resized', (event, bound) => {
             this.height = bound.height;

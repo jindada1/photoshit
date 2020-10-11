@@ -5,7 +5,7 @@ Vue.component("see", {
     },
     template: '<p>Hello {{name}}</p>',
     mounted() {
-        console.log('see mounted')
+        // console.log('see mounted');
     }
 });
 
@@ -17,7 +17,7 @@ Vue.component("pen", {
             <div v-for="col in predefineColors" @click="colorSelected(col)" :style="{backgroundColor: col}" class="ps-color-picker-block"></div>\
         </div>\
         <div>\
-            <span style="line-height: 40px;"> {{color}} </span>\
+            <span style="line-height: 40px; font-size: 14px;"> {{color}} </span>\
             <el-color-picker style="float: right" v-model="color" show-alpha @change="colorSelected"/>\
         </div>\
         <el-divider content-position="center">画笔粗细</el-divider>\
@@ -25,9 +25,12 @@ Vue.component("pen", {
             <div class="ps-pen-dot-holder" :style="{width: maxLineWidth + \'px\', height: maxLineWidth + \'px\'}">\
                 <div :style="{backgroundColor: color, width: lineWidth + \'px\', height: lineWidth + \'px\'}" class="ps-pen-dot"></div>\
             </div>\
-            <span>{{lineWidth}}</span>\
+            <span style="font-size: 14px;">{{lineWidth}}</span>\
         </div>\
         <el-slider v-model="lineWidth" :min="1" :max="maxLineWidth" @change="widthChanged"></el-slider>\
+        <el-divider content-position="center">美化</el-divider>\
+        <el-switch v-model="smoothLine"  disabled active-text="曲线平滑"></el-switch>\
+        <el-switch v-model="shapeDetect" disabled active-text="形状识别"></el-switch>\
     </div>\
     ',
     props: {
@@ -52,6 +55,8 @@ Vue.component("pen", {
                 '#1e90ff',
                 '#c71585',
             ],
+            smoothLine: false,
+            shapeDetect: false,
         }
     },
     methods: {
@@ -96,7 +101,7 @@ Vue.component("eraser", {
         <div class="ps-options">\
             <div v-for="mode in modes" :key="mode.name">\
                 <el-tooltip :content="mode.tip" effect="dark" placement="left">\
-                    <el-radio @change="modeSelected" v-model="eraserMode" :label="mode.name" border>{{mode.title}}</el-radio>\
+                    <el-radio @change="modeSelected" v-model="eraserMode" :disabled="!mode.ok" :label="mode.name" border>{{mode.title}}</el-radio>\
                 </el-tooltip>\
             </div>\
         </div>\
@@ -112,16 +117,19 @@ Vue.component("eraser", {
                     name: "normal",
                     tip: "擦过的地方保留底色",
                     title: "普通橡皮",
+                    ok: true
                 },
                 {
                     name: "super",
                     tip: "擦过的地方变透明",
                     title: "强力橡皮",
+                    ok: true
                 },
                 {
                     name: "dot",
                     tip: "去除擦过地方的斑点",
                     title: "斑点橡皮",
+                    ok: false
                 },
             ],
             eraserMode: 'normal',
