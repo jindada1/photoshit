@@ -2,7 +2,7 @@
 // tabs窗口
 Vue.component('ps-canvas', {
     template: '\
-        <canvas ref="board" :width="width" :height="height" style="margin: auto; box-shadow: 0px 0px 3px 0px gray;">\
+        <canvas :id="canvasid" ref="board" :width="width" :height="height" style="margin: auto; box-shadow: 0px 0px 3px 0px gray;">\
         </canvas>\
     ',
     data() {
@@ -10,10 +10,13 @@ Vue.component('ps-canvas', {
             width: 300,
             height: 300,
             context: null,
-            handler: {}
+            handler: {},
+            canvasid: 'awesome-canvas-' + this.index
         }
     },
-    props: [],
+    props: {
+        index: String
+    },
     computed: {
     },
     methods: {

@@ -5,7 +5,7 @@ Vue.component('ps-tabs', {
         <div>\
             <el-tabs v-model="selectedTabName" type="border-card" @tab-remove="removeTab" @tab-click="tabClicked">\
                 <el-tab-pane :style="{height: paneHeight}" v-for="(item, index) in editableTabs" :key="item.name" :label="item.title" :name="item.name" closable>\
-                    <ps-window :meta-data="item.meta"/>\
+                    <ps-window :meta-data="item.meta" :index="item.name"/>\
                 </el-tab-pane>\
                 <el-tab-pane label="+" name="add"/>\
             </el-tabs>\

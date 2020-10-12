@@ -37,7 +37,7 @@ function Pen(config = null) {
 
     return {
         // 控制组件初始化时把ui数据同步进来，此时未应用到公共 context 上
-        config: (key, value)=>{
+        config: (key, value) => {
             configuratins[key] = value;
         },
         set: (key, value) => {
@@ -49,7 +49,7 @@ function Pen(config = null) {
             context = ctx;
 
             // 将之前保存的配置应用于 context
-            for(var key in configuratins)
+            for (var key in configuratins)
                 context[key] = configuratins[key];
         },
         onMouseDown: (x, y, ctx, e) => {
@@ -99,7 +99,7 @@ function Eraser(config = null) {
             mode = m;
         },
         // 控制组件初始化时把ui数据同步进来，此时未应用到公共 context 上
-        config: (key, value)=>{
+        config: (key, value) => {
             configuratins[key] = value;
         },
         // 控制组件运行时调整参数
@@ -114,7 +114,7 @@ function Eraser(config = null) {
             // 设置橡皮颜色
             configuratins['strokeStyle'] = ctx['psUnderColor'];
             // 将之前保存的配置应用于 context
-            for(var key in configuratins)
+            for (var key in configuratins)
                 context[key] = configuratins[key];
         },
         onMouseDown: (x, y, ctx, e) => {
@@ -123,7 +123,7 @@ function Eraser(config = null) {
             context.beginPath();
             // 把路径移动到画布中的指定点，不创建线条
             context.moveTo(x, y);
-            
+
             if (mode === "super" || context.psUnderColor === transparent) {
                 // console.log(context);
                 cache['globalCompositeOperation'] = context.globalCompositeOperation;
@@ -166,7 +166,7 @@ function See(config = null) {
     var context = null;
 
     return {
-        info: ()=>{
+        info: () => {
             return {
                 width: context.canvas.width,
                 height: context.canvas.height,
@@ -182,11 +182,11 @@ function See(config = null) {
         },
         onMouseMove: (x, y, ctx, e) => {
             if (isDown) {
-                
+
             }
         },
         onMouseOut: (x, y, ctx, e) => {
-            
+
             isDown = false;
         },
         onMouseUp: (x, y, ctx, e) => {
@@ -195,7 +195,6 @@ function See(config = null) {
         }
     }
 }
-
 
 function Cut(config = null) {
 
@@ -212,16 +211,44 @@ function Cut(config = null) {
         },
         onMouseMove: (x, y, ctx, e) => {
             if (isDown) {
-                
+
             }
         },
         onMouseOut: (x, y, ctx, e) => {
-            
+
             isDown = false;
         },
         onMouseUp: (x, y, ctx, e) => {
-            
+
             isDown = false;
+        }
+    }
+}
+
+function Adjust(config = null) {
+
+    var context = null;
+    var canvasId = null;
+    var autoApply = false;
+    var img = new Image();
+
+    return {
+        setAutoApply: (value) => {
+            autoApply = value;
+        },
+        onBind: (ctx) => {
+            context = ctx;
+            canvasId = context.canvas.id;
+            if (!autoApply) {
+                // 创建底图
+                
+            }
+        },
+        adjust: (key, value) => {
+            Caman("#" + canvasId, function () {
+                this[key](value);
+                this.render();
+            });
         }
     }
 }

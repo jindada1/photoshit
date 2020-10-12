@@ -13,7 +13,7 @@ Vue.component('ps-window', {
                 </el-menu>\
             </div>\
             <div id="dropZone" style="flex-grow: 1; flex-shrink: 1; display: flex;" class="ps-transparent-background ps-canvas-container">\
-                <ps-canvas ref="canvas"></ps-canvas>\
+                <ps-canvas ref="canvas" :index="windowIndex"></ps-canvas>\
             </div>\
             <div style="flex: 0 0 260px; display: flex; flex-direction: column;">\
                 <div style="flex: 1;">\
@@ -69,13 +69,20 @@ Vue.component('ps-window', {
                     'name': 'cut',
                     'handler': Cut()
                 },
+                {
+                    'title': '调整',
+                    'name': 'adjust',
+                    'handler': Adjust()
+                },
             ],
             currentToolIndex: '0',
-            meta: this.metaData
+            meta: this.metaData,
+            windowIndex: this.index,
         }
     },
     props: {
-        metaData: Object
+        metaData: Object,
+        index: String
     },
     methods: {
         // 激活鼠标拖拽文件
@@ -128,7 +135,6 @@ Vue.component('ps-window', {
         // 激活拖拽
         this.enableDragIn();
         
-        let self = this;
-        self.toolSelected('0');
+        this.toolSelected('0');
     }
 })

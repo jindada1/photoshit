@@ -108,6 +108,84 @@ Vue.component("cut", {
     template: '<p>Hello {{name}}</p>'
 });
 
+
+Vue.component("adjust", {
+    template:  '\
+    <div style="padding: 0 15px;">\
+        <el-divider content-position="center">设置</el-divider>\
+        <el-switch v-model="autoApply" disabled active-text="自动将调整应用到原图"></el-switch>\
+        <el-divider content-position="center">参数调整</el-divider>\
+        <el-slider v-for="option in options" v-model="option.value" \
+            :min="option.min" :max="option.max" @change="change(option)"/>\
+        <el-divider content-position="center">滤镜</el-divider>\
+    </div>\
+    ',
+    props: {
+        name: String,
+        instance: Object,
+    },
+    data() {
+        return {
+            autoApply: true,
+            adjuster: this.instance,
+            options: [
+                {
+                    name: 'brightness',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 100,
+                    min: -100
+                },
+                {
+                    name: 'contrast',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 100,
+                    min: -100
+                },
+                {
+                    name: 'saturation',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 100,
+                    min: -100
+                },
+                {
+                    name: 'stackBlur',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 20,
+                    min: 0
+                },
+                {
+                    name: 'noise',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 100,
+                    min: 0
+                },
+                {
+                    name: 'sharpen',
+                    value: 0,
+                    oldvalue: 0,
+                    max: 100,
+                    min: 0
+                },
+            ]
+        }
+    },
+    methods: {
+        change(option) {
+            this.adjuster.adjust(option.name, option.value - option.oldvalue);
+            option.oldvalue = option.value;
+        },
+    },
+    mounted() {
+        console.log('adjust mounted');
+        this.adjuster.setAutoApply(this.autoApply)
+    }
+});
+
 Vue.component("eraser", {
     props: {
         name: String,
