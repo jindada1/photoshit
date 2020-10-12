@@ -122,9 +122,12 @@ function Eraser(config = null) {
             context.beginPath();
             // 把路径移动到画布中的指定点，不创建线条
             context.moveTo(x, y);
-            if (mode === "super") {
+            if (mode === "super" || context.psUnderColor === "rgba(0, 0, 0, 0)") {
+                // console.log(context);
                 cache['globalCompositeOperation'] = context.globalCompositeOperation;
+                cache['strokeStyle'] = context.strokeStyle;
                 context.globalCompositeOperation = 'destination-out';
+                context.strokeStyle = '#ffffff';
             }
         },
         onMouseMove: (x, y, ctx, e) => {
@@ -138,16 +141,18 @@ function Eraser(config = null) {
             // 当鼠标移出画布区域时,创建从当前点回到起始点的路径
             context.closePath();
             isDown = false;
-            if (mode === "super") {
+            if (mode === "super" || context.psUnderColor === "rgba(0, 0, 0, 0)") {
                 context.globalCompositeOperation = cache['globalCompositeOperation']
+                context.strokeStyle = cache['strokeStyle']
             }
         },
         onMouseUp: (x, y, ctx, e) => {
             // 当鼠标抬起时,创建从当前点回到起始点的路径
             context.closePath();
             isDown = false;
-            if (mode === "super") {
+            if (mode === "super" || context.psUnderColor === "rgba(0, 0, 0, 0)") {
                 context.globalCompositeOperation = cache['globalCompositeOperation']
+                context.strokeStyle = cache['strokeStyle']
             }
         }
     }

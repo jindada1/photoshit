@@ -68,6 +68,16 @@ Vue.component('ps-canvas', {
         },
         setImage(meta) {
             console.log(meta)
+            var img = new Image();
+            let self = this;
+            img.onload = function(){
+                self.width = this.width;
+                self.height = this.height;
+                Vue.nextTick(function () {
+                    self.context.drawImage(img,0,0); 
+                })
+            };
+            img.src = meta.path;
         },
         clearBoard() {
             this.context.fillStyle = this.context['psUnderColor'];
