@@ -1,11 +1,36 @@
 Vue.component("see", {
+    template: '\
+    <div style="padding: 0 15px;">\
+        <el-divider content-position="center">画布信息</el-divider>\
+        <el-form :model="info" label-width="80px" class="ps-form-item-list">\
+            <el-form-item label="图片宽度">{{info.width}}</el-form-item>\
+            <el-form-item label="图片高度">{{info.height}}</el-form-item>\
+            <el-form-item label="图片底色">{{info.undercolor}}</el-form-item>\
+        </el-form>\
+    </div>\
+    ',
     props: {
         name: String,
         instance: Object,
     },
-    template: '<p>Hello {{name}}</p>',
+    data() {
+        return {
+            canvas: this.instance,
+            info: {
+                width: 1,
+                height: 2,
+                undercolor: 'white'
+            }
+        }
+    },
     mounted() {
-        // console.log('see mounted');
+        console.log('see mounted');
+        let self = this;
+        // see 这个组件比 window 更先渲染，而 self.canvas 对象是在 window 渲染结束后才获取 context。
+        Vue.nextTick(()=>{
+            console.log('nexttick in see');
+            self.info = self.canvas.info();
+        })
     }
 });
 

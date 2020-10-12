@@ -159,8 +159,15 @@ function See(config = null) {
     var context = null;
 
     return {
+        info: ()=>{
+            return {
+                width: context.canvas.width,
+                height: context.canvas.height,
+                undercolor: context.psUnderColor
+            }
+        },
         onBind: (ctx) => {
-            // console.log('查看模式');
+            console.log('绑定 See');
             context = ctx;
         },
         onMouseDown: (x, y, ctx, e) => {

@@ -102,3 +102,7 @@ body {
     width: 100%;
     margin-top: 10px;
 }
+
+.ps-form-item-list .el-form-item {
+    margin: 5px 0 0 0;
+}

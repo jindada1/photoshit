@@ -31,10 +31,14 @@ Vue.component('ps-canvas', {
                     onMouseUp: (e) => console.log('mouseup')
                 }
         },
-        init(meta) {
-            this.context = this.$refs.board.getContext("2d");
+        addCustomProperty() {
             // ps 夹带的私货在这里装车（装进 context）
             this.context['psUnderColor'] = 'rgba(0,0,0,0)';
+        },
+        init(meta) {
+            this.context = this.$refs.board.getContext("2d");
+            this.addCustomProperty();
+
             switch (meta.type) {
                 case 'board':
                     this.setBoard(meta);
@@ -56,8 +60,9 @@ Vue.component('ps-canvas', {
             this.context['psUnderColor'] = meta.undercolor;
 
             let self = this;
-            // canvas每当高度或宽度被重设时，画布内容就会被清空，一定要在渲染完成后去操作
+            // canvas每当高度或宽度被重设时，画布内容就会被清空，一定要在渲染完成（宽高设定好）后去操作
             Vue.nextTick(function () {
+                // console.log('nexttick in canvas');
                 self.clearBoard();
             })
         },

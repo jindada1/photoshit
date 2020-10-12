@@ -127,7 +127,8 @@ Vue.component('ps-window', {
         this.$refs.canvas.init(this.meta)
         // 激活拖拽
         this.enableDragIn();
-        // 选择模式
-        this.toolSelected('0');
+        
+        let self = this;
+        self.toolSelected('0');
     }
 })

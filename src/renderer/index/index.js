@@ -10,5 +10,6 @@ new Vue({
         
     },
     mounted() {
+        console.log('app mounted');
     }
 })
