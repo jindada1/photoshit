@@ -12,7 +12,7 @@ Vue.component('ps-window', {
                     </el-menu-item>\
                 </el-menu>\
             </div>\
-            <div id="dropZone" style="flex-grow: 1; flex-shrink: 1; display: flex;" class="ps-transparent-background">\
+            <div id="dropZone" style="flex-grow: 1; flex-shrink: 1; display: flex;" class="ps-transparent-background ps-canvas-container">\
                 <ps-canvas ref="canvas"></ps-canvas>\
             </div>\
             <div style="flex: 0 0 260px; display: flex; flex-direction: column;">\

@@ -2,10 +2,10 @@ Vue.component("see", {
     template: '\
     <div style="padding: 0 15px;">\
         <el-divider content-position="center">画布信息</el-divider>\
-        <el-form :model="info" label-width="80px" class="ps-form-item-list">\
-            <el-form-item label="图片宽度">{{info.width}}</el-form-item>\
-            <el-form-item label="图片高度">{{info.height}}</el-form-item>\
-            <el-form-item label="图片底色">{{info.undercolor}}</el-form-item>\
+        <el-form :model="info" label-width="90px" class="ps-form-item-list">\
+            <el-form-item label="图片宽度：">{{info.width}} px</el-form-item>\
+            <el-form-item label="图片高度：">{{info.height}} px</el-form-item>\
+            <el-form-item label="图片底色：">{{info.undercolor}}</el-form-item>\
         </el-form>\
     </div>\
     ',
