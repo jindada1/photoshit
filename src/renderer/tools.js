@@ -230,7 +230,7 @@ function Adjust(config = null) {
     var context = null;
     var canvasId = null;
     var autoApply = false;
-    var img = null;
+    var img = false;
 
     function render(image) {
         const imageData = new ImageData(
@@ -251,6 +251,9 @@ function Adjust(config = null) {
             img = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
         },
         adjust: (options) => {
+            
+            if(!img) return;
+
             Jimp.read(img, (err, image) => {
                 if (err) throw err;
                 for (let index in options) {

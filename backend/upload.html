@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>上传图片</title>
+    <link rel="stylesheet" type="text/css" href="/cdn/element-ui/element.css">
+</head>
+
+<style>
+    .ps-image {
+        max-width: 100%;
+        max-height: 100%;
+        margin: auto;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <div style="width: 100%; height: 400px;">
+            <img class="ps-image" id="image" />
+        </div>
+        <el-upload ref="upload" :action="uploadurl" :on-change="handlePreview" :auto-upload="false"
+            :show-file-list="false" :limit="1">
+            <el-button slot="trigger" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" type="success" @click="submitUpload">上传到服务器</el-button>
+        </el-upload>
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="/cdn/vue.js"></script>
+<!-- import JavaScript -->
+<script src="/cdn/element-ui/element.js"></script>
+<!-- import axios -->
+<script src="/cdn/axios.min.js"></script>
+<script>
+
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                uploadurl: ""
+            };
+        },
+        methods: {
+            submitUpload() {
+                console.log(this.uploadurl);
+                this.$refs.upload.submit();
+            },
+            handlePreview(file) {
+                let fileReader = new FileReader(),
+                    fileType = file.raw.type;
+                fileReader.readAsDataURL(file.raw);
+                fileReader.onload = function () {
+                    document.getElementById('image').src = this.result;
+                }
+            }
+        },
+        mounted() {
+            console.log('app mounted');
+            var url = document.location.toString();
+            var hash = url.split('/')[4];
+            this.uploadurl = '/upload/img/' + hash
+        }
+    })
+</script>
+
+</html>

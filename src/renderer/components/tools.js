@@ -119,7 +119,7 @@ Vue.component("adjust", {
             <div style="margin-top:14px; font-size:14px; ">{{option.title}}\
                 <span style="float:right">{{option.value}}</span>\
             </div>\
-            <el-slider v-model="option.value" @change="change(option)"\
+            <el-slider v-model="option.value" @input="change(option)"\
                 :min="option.min" :max="option.max" :step="option.step"/>\
         </div>\
         <el-divider content-position="center">滤镜</el-divider>\
@@ -165,6 +165,14 @@ Vue.component("adjust", {
                     min: 0,
                     step: 0.01,
                     title: '渐变'
+                },
+                {
+                    name: 'blur',
+                    value: 0,
+                    max: 20,
+                    min: 0,
+                    step: 1,
+                    title: '模糊'
                 }
             ]
         }
