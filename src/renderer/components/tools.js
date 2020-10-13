@@ -115,8 +115,13 @@ Vue.component("adjust", {
         <el-divider content-position="center">设置</el-divider>\
         <el-switch v-model="autoApply" disabled active-text="自动将调整应用到原图"></el-switch>\
         <el-divider content-position="center">参数调整</el-divider>\
-        <el-slider v-for="option in options" v-model="option.value" :key="option.name" \
-            :min="option.min" :max="option.max" @change="change(option)" :step="option.step"/>\
+        <div v-for="option in options" :key="option.name" >\
+            <div style="margin-top:14px; font-size:14px; ">{{option.title}}\
+                <span style="float:right">{{option.value}}</span>\
+            </div>\
+            <el-slider v-model="option.value" @change="change(option)"\
+                :min="option.min" :max="option.max" :step="option.step"/>\
+        </div>\
         <el-divider content-position="center">滤镜</el-divider>\
     </div>\
     ',
@@ -134,28 +139,32 @@ Vue.component("adjust", {
                     value: 0,
                     max: 1,
                     min: -1,
-                    step: 0.01
+                    step: 0.01,
+                    title: '亮度'
                 },
                 {
                     name: 'contrast',
                     value: 0,
                     max: 1,
                     min: -1,
-                    step: 0.01
+                    step: 0.01,
+                    title: '对比度'
                 },
                 {
                     name: 'opacity',
                     value: 1,
                     max: 1,
                     min: 0,
-                    step: 0.01
+                    step: 0.01,
+                    title: '透明度'
                 },
                 {
                     name: 'fade',
-                    value: 1,
+                    value: 0,
                     max: 1,
                     min: 0,
-                    step: 0.01
+                    step: 0.01,
+                    title: '渐变'
                 }
             ]
         }
