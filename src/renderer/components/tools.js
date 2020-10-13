@@ -115,8 +115,8 @@ Vue.component("adjust", {
         <el-divider content-position="center">设置</el-divider>\
         <el-switch v-model="autoApply" disabled active-text="自动将调整应用到原图"></el-switch>\
         <el-divider content-position="center">参数调整</el-divider>\
-        <el-slider v-for="option in options" v-model="option.value" \
-            :min="option.min" :max="option.max" @change="change(option)"/>\
+        <el-slider v-for="option in options" v-model="option.value" :key="option.name" \
+            :min="option.min" :max="option.max" @change="change(option)" :step="option.step"/>\
         <el-divider content-position="center">滤镜</el-divider>\
     </div>\
     ',
@@ -132,52 +132,37 @@ Vue.component("adjust", {
                 {
                     name: 'brightness',
                     value: 0,
-                    oldvalue: 0,
-                    max: 100,
-                    min: -100
+                    max: 1,
+                    min: -1,
+                    step: 0.01
                 },
                 {
                     name: 'contrast',
                     value: 0,
-                    oldvalue: 0,
-                    max: 100,
-                    min: -100
+                    max: 1,
+                    min: -1,
+                    step: 0.01
                 },
                 {
-                    name: 'saturation',
-                    value: 0,
-                    oldvalue: 0,
-                    max: 100,
-                    min: -100
+                    name: 'opacity',
+                    value: 1,
+                    max: 1,
+                    min: 0,
+                    step: 0.01
                 },
                 {
-                    name: 'stackBlur',
-                    value: 0,
-                    oldvalue: 0,
-                    max: 20,
-                    min: 0
-                },
-                {
-                    name: 'noise',
-                    value: 0,
-                    oldvalue: 0,
-                    max: 100,
-                    min: 0
-                },
-                {
-                    name: 'sharpen',
-                    value: 0,
-                    oldvalue: 0,
-                    max: 100,
-                    min: 0
-                },
+                    name: 'fade',
+                    value: 1,
+                    max: 1,
+                    min: 0,
+                    step: 0.01
+                }
             ]
         }
     },
     methods: {
-        change(option) {
-            this.adjuster.adjust(option.name, option.value - option.oldvalue);
-            option.oldvalue = option.value;
+        change() {
+            this.adjuster.adjust(this.options);
         },
     },
     mounted() {

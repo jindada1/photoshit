@@ -230,7 +230,16 @@ function Adjust(config = null) {
     var context = null;
     var canvasId = null;
     var autoApply = false;
-    var img = new Image();
+    var img = null;
+
+    function render(image) {
+        const imageData = new ImageData(
+            Uint8ClampedArray.from(image.bitmap.data),
+            image.bitmap.width,
+            image.bitmap.height
+        );
+        context.putImageData(imageData, 0, 0);
+    }
 
     return {
         setAutoApply: (value) => {
@@ -239,15 +248,16 @@ function Adjust(config = null) {
         onBind: (ctx) => {
             context = ctx;
             canvasId = context.canvas.id;
-            if (!autoApply) {
-                // 创建底图
-                
-            }
+            img = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
         },
-        adjust: (key, value) => {
-            Caman("#" + canvasId, function () {
-                this[key](value);
-                this.render();
+        adjust: (options) => {
+            Jimp.read(img, (err, image) => {
+                if (err) throw err;
+                for (let index in options) {
+                    image[options[index].name](options[index].value);
+                }
+
+                render(image)
             });
         }
     }

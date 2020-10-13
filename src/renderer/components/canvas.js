@@ -73,11 +73,11 @@ Vue.component('ps-canvas', {
             console.log(meta)
             var img = new Image();
             let self = this;
-            img.onload = function(){
+            img.onload = function () {
                 self.width = this.width;
                 self.height = this.height;
                 Vue.nextTick(function () {
-                    self.context.drawImage(img,0,0); 
+                    self.context.drawImage(img, 0, 0);
                 })
             };
             img.src = meta.path;
