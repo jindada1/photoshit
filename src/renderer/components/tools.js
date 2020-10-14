@@ -24,11 +24,11 @@ Vue.component("see", {
         }
     },
     mounted() {
-        console.log('see mounted');
+        // console.log('see mounted');
         let self = this;
         // see 这个组件比 window 更先渲染，而 self.canvas 对象是在 window 渲染结束后才获取 context。
-        Vue.nextTick(()=>{
-            console.log('nexttick in see');
+        Vue.nextTick(() => {
+            // console.log('nexttick in see');
             self.info = self.canvas.info();
         })
     }
@@ -108,9 +108,16 @@ Vue.component("cut", {
     template: '<p>Hello {{name}}</p>'
 });
 
+Vue.component("ps-filter", {
+    props: {
+        name: String,
+        instance: Object,
+    },
+    template: '<p>Hello {{name}}</p>'
+});
 
 Vue.component("adjust", {
-    template:  '\
+    template: '\
     <div style="padding: 0 15px;">\
         <el-divider content-position="center">设置</el-divider>\
         <el-switch v-model="autoApply" disabled active-text="自动将调整应用到原图"></el-switch>\
@@ -122,7 +129,12 @@ Vue.component("adjust", {
             <el-slider v-model="option.value" @input="change(option)"\
                 :min="option.min" :max="option.max" :step="option.step"/>\
         </div>\
-        <el-divider content-position="center">滤镜</el-divider>\
+        <el-divider content-position="center">渲染顺序</el-divider>\
+        <el-table :data="adjustments" style="width: 100%" :show-header="false">\
+            <el-table-column type="index" width="40"> </el-table-column>\
+            <el-table-column prop="title" label="参数" width="100"> </el-table-column>\
+            <el-table-column prop="value" label="值"> </el-table-column>\
+        </el-table>\
     </div>\
     ',
     props: {
@@ -140,7 +152,8 @@ Vue.component("adjust", {
                     max: 1,
                     min: -1,
                     step: 0.01,
-                    title: '亮度'
+                    title: '亮度',
+                    origin: 0,
                 },
                 {
                     name: 'contrast',
@@ -148,7 +161,8 @@ Vue.component("adjust", {
                     max: 1,
                     min: -1,
                     step: 0.01,
-                    title: '对比度'
+                    title: '对比度',
+                    origin: 0,
                 },
                 {
                     name: 'opacity',
@@ -156,15 +170,8 @@ Vue.component("adjust", {
                     max: 1,
                     min: 0,
                     step: 0.01,
-                    title: '透明度'
-                },
-                {
-                    name: 'fade',
-                    value: 0,
-                    max: 1,
-                    min: 0,
-                    step: 0.01,
-                    title: '渐变'
+                    title: '透明度',
+                    origin: 1,
                 },
                 {
                     name: 'blur',
@@ -172,19 +179,43 @@ Vue.component("adjust", {
                     max: 20,
                     min: 0,
                     step: 1,
-                    title: '模糊'
+                    title: '模糊',
+                    origin: 0,
                 }
-            ]
+            ],
+            adjustments: [],
         }
     },
     methods: {
-        change() {
-            this.adjuster.adjust(this.options);
+        change(option) {
+            this.orderAppend(option);
+            // console.log(this.adjustments);
+            this.adjuster.adjust(this.adjustments);
         },
+        orderAppend(option) {
+
+            let index = this.adjustments.findIndex(op => op.name === option.name);
+
+            if (index > -1) this.adjustments.splice(index, 1);
+
+            if (option.value === option.origin) return;
+
+            this.adjustments.push({
+                name: option.name,
+                value: option.value,
+                title: option.title,
+            });
+        },
+        onShow() {
+            for (const option of this.options) {
+                option.value = option.origin;
+            }
+        }
     },
     mounted() {
-        console.log('adjust mounted');
-        this.adjuster.setAutoApply(this.autoApply)
+        // console.log('adjust mounted');
+        this.adjuster.setAutoApply(this.autoApply);
+        this.adjuster.addbindEvent(this.onShow);
     }
 });
 

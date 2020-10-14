@@ -70,7 +70,6 @@ Vue.component('ps-canvas', {
             })
         },
         setImage(meta) {
-            console.log(meta)
             var img = new Image();
             let self = this;
             img.onload = function () {

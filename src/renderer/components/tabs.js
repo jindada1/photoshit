@@ -32,7 +32,7 @@ Vue.component('ps-tabs', {
     },
     computed: {
         paneHeight: function () {
-            return (this.height - 30) + 'px';
+            return (this.height - 36) + 'px';
         }
     },
     methods: {

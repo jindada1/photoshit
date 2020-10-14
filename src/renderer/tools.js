@@ -174,7 +174,6 @@ function See(config = null) {
             }
         },
         onBind: (ctx) => {
-            console.log('绑定 See');
             context = ctx;
         },
         onMouseDown: (x, y, ctx, e) => {
@@ -225,6 +224,35 @@ function Cut(config = null) {
     }
 }
 
+function Filter(config = null) {
+
+    var isDown = false;
+    var context = null;
+
+    return {
+        onBind: (ctx) => {
+            // console.log('裁剪模式');
+            context = ctx;
+        },
+        onMouseDown: (x, y, ctx, e) => {
+            isDown = true;
+        },
+        onMouseMove: (x, y, ctx, e) => {
+            if (isDown) {
+
+            }
+        },
+        onMouseOut: (x, y, ctx, e) => {
+
+            isDown = false;
+        },
+        onMouseUp: (x, y, ctx, e) => {
+
+            isDown = false;
+        }
+    }
+}
+
 function Adjust(config = null) {
 
     var context = null;
@@ -241,7 +269,12 @@ function Adjust(config = null) {
         context.putImageData(imageData, 0, 0);
     }
 
+    let onbindcb = null;
+
     return {
+        addbindEvent(callback) {
+            onbindcb = callback;
+        },
         setAutoApply: (value) => {
             autoApply = value;
         },
@@ -249,6 +282,7 @@ function Adjust(config = null) {
             context = ctx;
             canvasId = context.canvas.id;
             img = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+            if (onbindcb) onbindcb();
         },
         adjust: (options) => {
             

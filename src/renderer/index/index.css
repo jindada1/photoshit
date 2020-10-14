@@ -38,11 +38,11 @@ body {
 }
 
 .el-tabs__item {
-    height: 30px;
-    line-height: 30px;
+    height: 36px;
+    line-height: 36px;
 }
 .el-tabs__nav-next, .el-tabs__nav-prev {
-    line-height: 30px;
+    line-height: 36px;
 }
 
 .el-tabs--border-card>.el-tabs__content {

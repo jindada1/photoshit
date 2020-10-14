@@ -4,10 +4,10 @@
 Vue.component('ps-window', {
     template: '\
         <div style="display: flex; flex-direction: row; height: 100%;">\
-            <div style="flex: 0 0 150px;">\
+            <div style="flex: 0 0 120px;">\
                 <el-menu style="border-right: none" @select="toolSelected" :default-active="currentToolIndex">\
                     <el-menu-item v-for="(tool, index) in tools" :index="index.toString()" :key="tool.name">\
-                        <i class="el-icon-menu"></i>\
+                        <i :class="tool.icon"></i>\
                         <span slot="title">{{tool.title}}</span>\
                     </el-menu-item>\
                 </el-menu>\
@@ -50,29 +50,40 @@ Vue.component('ps-window', {
         return {
             tools: [
                 {
-                    'title': '查看',
-                    'name': 'see',
-                    'handler': See()
+                    title: '查看',
+                    icon: 'el-icon-view',
+                    name: 'see',
+                    handler: See()
                 },
                 {
-                    'title': '画笔',
-                    'name': 'pen',
-                    'handler': Pen()
+                    title: '画笔',
+                    icon: 'el-icon-edit',
+                    name: 'pen',
+                    handler: Pen()
                 },
                 {
-                    'title': '橡皮',
-                    'name': 'eraser',
-                    'handler': Eraser()
+                    title: '橡皮',
+                    icon: 'el-icon-smoking',
+                    name: 'eraser',
+                    handler: Eraser()
                 },
                 {
-                    'title': '裁剪',
-                    'name': 'cut',
-                    'handler': Cut()
+                    title: '调整',
+                    icon: 'el-icon-set-up',
+                    name: 'adjust',
+                    handler: Adjust()
                 },
                 {
-                    'title': '调整',
-                    'name': 'adjust',
-                    'handler': Adjust()
+                    title: '滤镜',
+                    icon: 'el-icon-film',
+                    name: 'ps-filter',
+                    handler: Filter()
+                },
+                {
+                    title: '裁剪',
+                    icon: 'el-icon-scissors',
+                    name: 'cut',
+                    handler: Cut()
                 },
             ],
             currentToolIndex: '0',
