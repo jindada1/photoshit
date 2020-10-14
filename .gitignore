@@ -4,3 +4,4 @@ out
 test*
 
 __pycache__
+backend/images

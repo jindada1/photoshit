@@ -6,15 +6,17 @@ waiting = []
 
 folder_img = './images'
 
+
 async def index(request):
 
-    return web.Response(text = 'index')
+    return web.Response(text='index')
+
 
 async def upload_hash(request):
-    
+
     if not path.exists(folder_img):
         mkdir(folder_img)
-    
+
     t = str(time.time())
     hashstr = str(hash(t))[1:]
 
@@ -30,34 +32,62 @@ async def upload_hash(request):
         'get': '/img/%s.jpg' % hashstr
     })
 
-async def uploadpage(request):
-
-    hashvalue = request.match_info['hash']
-
-    if not hashvalue in waiting:
-        return web.Response( text='<h1>湖人总冠军！</h1>', content_type='text/html')
-    
-    return web.FileResponse('./upload.html')
 
 async def upload(request):
 
     if not path.exists(folder_img):
         mkdir(folder_img)
 
-    imgname = request.match_info['hash'] + '.jpg'
-    
-    # get form data
-    data = await request.post()
-    b_file = data['file'].file.read()
+    reader = await request.multipart()
+    field = await reader.next()
+
+    hashvalue = request.match_info['hash']
+
+    if not hashvalue in waiting:
+        return web.Response(test='denied') 
+
+    waiting.remove(hashvalue)
+    imgname = hashvalue + '.jpg'
 
     try:
         with open(path.join(folder_img, imgname), 'wb') as f:
-            f.write(b_file)
-            
-        return web.Response(test = 'success')
+            while True:
+                chunk = await field.read_chunk()  # 8192 bytes by default.
+                if not chunk:
+                    break
+                
+                f.write(chunk)
+
+        return web.Response(test='success')
 
     except:
-        return web.Response(text = 'failed')
+        return web.Response(text='failed')
+
+
+async def uploadpage(request):
+
+    hashvalue = request.match_info['hash']
+
+    if not hashvalue in waiting:
+        return web.FileResponse('./kiki.html')
+
+    return web.FileResponse('./upload.html')
+
+
+async def kris(request):
+    return web.FileResponse('./upload.html')
+
+
+async def image(request):
+    # 参数解析，本地路径合成
+    imagename = request.match_info['name']
+    imagepath = path.join(folder_img, imagename)
+    # 如果有就返回文件
+    if path.exists(imagepath):
+        return web.FileResponse(imagepath)
+    # 没有就返回字符串
+    return web.Response(text='no')
+
 
 
 def setup_routes(app):
@@ -65,7 +95,6 @@ def setup_routes(app):
     # index html
     app.router.add_get('/', index)
 
-    app.router.add_static('/img/', path='images', name='images')
     app.router.add_static('/cdn/', path='cdn', name='cdn')
 
     app.router.add_get('/uploadhash', upload_hash)
@@ -73,3 +102,7 @@ def setup_routes(app):
     app.router.add_get('/uploadpage/{hash}', uploadpage)
 
     app.router.add_post('/upload/img/{hash}', upload)
+
+    app.router.add_get('/img/{name}', image)
+
+    app.router.add_get('/kris', kris)

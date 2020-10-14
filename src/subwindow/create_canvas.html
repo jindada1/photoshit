@@ -62,7 +62,13 @@
                         <el-input v-model="imageUrl" placeholder="要导入的图片链接"></el-input>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="实时上传" name="upload">实时上传</el-tab-pane>
+                <el-tab-pane label="实时上传" name="upload">
+                    <div style="text-align: center;">
+                        <div id="qrcode" style="height:150px; margin: 20px auto;" :style="{width:qrcodeWidth + 'px'}">
+                        </div>
+                        <el-button @click="getQRCode" icon="el-icon-folder-opened" plain>点击获取二维码</el-button>
+                    </div>
+                </el-tab-pane>
                 <el-tab-pane label="模板" name="template">模板</el-tab-pane>
             </el-tabs>
         </div>
@@ -80,6 +86,7 @@
 <!-- import JavaScript -->
 <script src="../cdn/element-ui/element.js"></script>
 <script src="../cdn/axios.min.js"></script>
+<script src="../cdn/qrcode.min.js"></script>
 
 <script>
     const { remote } = require('electron');
@@ -91,6 +98,9 @@
         template: 'template',
         upload: 'upload',
     }
+
+    // const server = 'http://goldenproud.cn:5678';
+    const server = 'http://127.0.0.1:8080';
 
     function formatCorrect(format) {
         return (format == "image/png" || format == "image/jpeg")
@@ -131,13 +141,46 @@
                 image: {
                     path: null
                 },
-                imageUrl: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg'
+                imageUrl: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg',
+                qrcodeWidth: 128
             }
         },
         methods: {
             //关闭
             close() {
                 remote.getCurrentWindow().close();
+            },
+            getQRCode() {
+                let self = this;
+                axios.get(server + '/uploadhash')
+                    .then(function (response) {
+                        let meta = response.data
+                        var qrcode = new QRCode("qrcode", {
+                            text: server + meta.upload,
+                            width: self.qrcodeWidth,
+                            height: self.qrcodeWidth,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+                        self.tryget(server + meta.get);
+                    });
+            },
+            tryget(uri, time = 600) {
+                if (time < 1) return;   // 不再尝试
+
+                let self = this;
+                axios.get(uri)
+                    .then(function (response) {
+                        let ctype = response.headers['content-type'];
+                        if (ctype === 'text/plain') {
+                            setTimeout(() => {
+                                self.tryget(uri, time - 1);
+                            }, 1000);
+                        }
+                        else
+                            console.log('-=-=-=-')
+                    });
             },
             openBrowser() {
                 ipcRenderer.send('open-imagefile');
