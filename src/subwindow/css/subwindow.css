@@ -65,3 +65,13 @@
     vertical-align: middle;
     display: inline-block;
 }
+
+.blocker {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    bottom: 8px;
+    z-index: 999;
+    background-color: white;
+}

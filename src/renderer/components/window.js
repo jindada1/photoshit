@@ -26,7 +26,7 @@ Vue.component('ps-window', {
                 <div class="button-area">\
                     <el-row :gutter="10">\
                         <el-col :span="8">\
-                            <el-tooltip effect="dark" content="撤销" placement="top-start">\
+                            <el-tooltip effect="dark" content="撤销" placement="top">\
                                 <el-button plain icon="el-icon-back" />\
                             </el-tooltip>\
                         </el-col>\
@@ -36,7 +36,7 @@ Vue.component('ps-window', {
                             </el-tooltip>\
                         </el-col>\
                         <el-col :span="8">\
-                            <el-tooltip effect="dark" content="清空画布" placement="top-end">\
+                            <el-tooltip effect="dark" content="清空画布" placement="top">\
                                 <el-button plain icon="el-icon-delete"/>\
                             </el-tooltip>\
                         </el-col>\

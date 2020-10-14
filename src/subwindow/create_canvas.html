@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" style="overflow: hidden;">
         <div class="ps-dialog__header">
             <span class="ps-dialog__title">创建新画布</span>
             <el-button class="ps-dialog__titlebtn" plain icon="el-icon-close" @click="close"></el-button>
@@ -78,7 +78,7 @@
                 <el-button type="primary" @click="createNew">创 建</el-button>
             </div>
         </div>
-    </div>
+        <div class="blocker" v-if="visible"></div>
     </div>
 </body>
 <!-- import Vue before Element -->
@@ -99,8 +99,8 @@
         upload: 'upload',
     }
 
-    // const server = 'http://goldenproud.cn:5678';
-    const server = 'http://127.0.0.1:8080';
+    const server = 'http://goldenproud.cn:5678';
+    // const server = 'http://127.0.0.1:8080';
 
     function formatCorrect(format) {
         return (format == "image/png" || format == "image/jpeg")
@@ -110,6 +110,7 @@
         el: '#app',
         data: function () {
             return {
+                visible: false,
                 createType: createTypes.board,
                 canvas: {
                     width: '400',
@@ -142,7 +143,10 @@
                     path: null
                 },
                 imageUrl: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3109674115,2519629056&fm=26&gp=0.jpg',
-                qrcodeWidth: 128
+                qrcodeWidth: 128,
+                noqr: true,
+                qrcode: null,
+                lastTimeout: null
             }
         },
         methods: {
@@ -151,35 +155,50 @@
                 remote.getCurrentWindow().close();
             },
             getQRCode() {
+                this.noqr = false;
                 let self = this;
                 axios.get(server + '/uploadhash')
                     .then(function (response) {
-                        let meta = response.data
-                        var qrcode = new QRCode("qrcode", {
-                            text: server + meta.upload,
-                            width: self.qrcodeWidth,
-                            height: self.qrcodeWidth,
-                            colorDark: "#000000",
-                            colorLight: "#ffffff",
-                            correctLevel: QRCode.CorrectLevel.H
-                        });
+                        let meta = response.data;
+                        self.qrcode.clear();
+                        self.qrcode.makeCode(server + meta.upload);
                         self.tryget(server + meta.get);
                     });
             },
             tryget(uri, time = 600) {
-                if (time < 1) return;   // 不再尝试
+
+                if (this.lastTimeout) {
+                    clearTimeout(this.lastTimeout);
+                }
+
+                this.getLoop(uri, 300, 8);
+            },
+            getLoop(uri, times, seconds) {
 
                 let self = this;
+
+                if (times < 1) {
+                    self.warn('二维码已过期');
+                    return;   // 不再尝试
+                }
+
+                if (seconds > 1) {
+                    seconds = parseInt(seconds / 2);
+                }
+
                 axios.get(uri)
                     .then(function (response) {
-                        let ctype = response.headers['content-type'];
-                        if (ctype === 'text/plain') {
-                            setTimeout(() => {
-                                self.tryget(uri, time - 1);
-                            }, 1000);
+                        if (response.data === 'no') {
+                            self.lastTimeout = setTimeout(() => {
+                                self.getLoop(uri, times - 1, seconds);
+                            }, 1000 * seconds + 500);
                         }
-                        else
-                            console.log('-=-=-=-')
+                        else {
+                            self.sendMain({
+                                type: createTypes.image,
+                                path: uri
+                            })
+                        }
                     });
             },
             openBrowser() {
@@ -268,8 +287,9 @@
                         result = this.createImage();
                         break;
                     case createTypes.upload:
-                        // code block
-                        break;
+                        if (this.noqr) this.getQRCode();
+                        this.$message('请扫描二维码在移动端上传');
+                        return;
                     case createTypes.template:
                         // code block
                         break;
@@ -277,11 +297,14 @@
 
                 if (result) {
                     result.type = this.createType;
-                    ipcRenderer.send('create-canvas', result);
-                    this.close();
+                    this.sendMain(result);
                 }
                 else
                     this.warn('你想创建啥？');
+            },
+            sendMain(data) {
+                ipcRenderer.send('create-canvas', data);
+                this.close();
             },
             warn(text) {
                 this.$message({
@@ -297,6 +320,13 @@
             ipcRenderer.on('open-image', (event, image) => {
                 self.loadImage(image);
             })
+            this.qrcode = new QRCode("qrcode", {
+                width: this.qrcodeWidth,
+                height: this.qrcodeWidth,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
         }
     })
 </script>
