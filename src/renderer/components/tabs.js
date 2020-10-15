@@ -4,29 +4,21 @@ Vue.component('ps-tabs', {
     template: '\
         <div>\
             <el-tabs v-model="selectedTabName" type="border-card" @tab-remove="removeTab" @tab-click="tabClicked">\
-                <el-tab-pane :style="{height: paneHeight}" v-for="(item, index) in editableTabs" :key="item.name" :label="item.title" :name="item.name" closable>\
+                <el-tab-pane :style="{height: paneHeight}" v-for="(item, index) in editableTabs" :key="item.name"\
+                    :label="item.title" :name="item.name" closable>\
                     <ps-window :meta-data="item.meta" :index="item.name"/>\
                 </el-tab-pane>\
-                <el-tab-pane label="+" name="add"/>\
+                <el-tab-pane :style="{height: paneHeight}" label=" ＋ " name="add">\
+                    <ps-home/>\
+                </el-tab-pane>\
             </el-tabs>\
         </div>\
     ',
     data() {
         return {
-            selectedTabName: 'test',
+            selectedTabName: 'add',
             tabIndex: 0,
-            editableTabs: [
-                {
-                    name: 'test',
-                    title: 'test',
-                    meta: {
-                        width: 360,
-                        height: 300,
-                        type: 'board',
-                        undercolor: "#ffffff"
-                    }
-                }
-            ],
+            editableTabs: [],
             height: document.body.clientHeight
         }
     },
@@ -37,11 +29,7 @@ Vue.component('ps-tabs', {
     },
     methods: {
         tabClicked(tab) {
-            if (tab.name === 'add')
-                this.createNew();
-        },
-        createNew() {
-            ipcRenderer.send('add');
+            if (tab.name === 'add') ipcRenderer.send('add');
         },
         addTab(meta) {
             let newTabName = ++this.tabIndex + '';
