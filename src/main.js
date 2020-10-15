@@ -87,7 +87,7 @@ ipc.on('add', () => {
       nodeIntegration: true
     }
   })
-  createCanvasWin.webContents.openDevTools();
+  // createCanvasWin.webContents.openDevTools();
   createCanvasWin.loadURL(path.join('file:', __dirname, 'subwindow/create_canvas.html')); //new.html是新开窗口的渲染进程
   createCanvasWin.on('closed', () => { createCanvasWin = null })
 })

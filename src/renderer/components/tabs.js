@@ -34,7 +34,7 @@ Vue.component('ps-tabs', {
         addTab(meta) {
             let newTabName = ++this.tabIndex + '';
             this.editableTabs.push({
-                title: 'Untitled-' + newTabName,
+                title: '未命名-' + newTabName,
                 name: newTabName,
                 meta: meta
             });

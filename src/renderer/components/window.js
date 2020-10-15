@@ -27,12 +27,12 @@ Vue.component('ps-window', {
                     <el-row :gutter="10">\
                         <el-col :span="8">\
                             <el-tooltip effect="dark" content="撤销" placement="top">\
-                                <el-button plain icon="el-icon-back" />\
+                                <el-button plain icon="el-icon-back" @click="step(-1)"/>\
                             </el-tooltip>\
                         </el-col>\
                         <el-col :span="8">\
                             <el-tooltip effect="dark" content="恢复" placement="top">\
-                                <el-button plain icon="el-icon-right" />\
+                                <el-button plain icon="el-icon-right" @click="step(1)"/>\
                             </el-tooltip>\
                         </el-col>\
                         <el-col :span="8">\
@@ -123,6 +123,9 @@ Vue.component('ps-window', {
                     });
                 });
             });
+        },
+        step(delta) {
+            this.$refs.canvas.showCache(delta);
         },
         clearCanvas() {
             this.$refs.canvas.clear();

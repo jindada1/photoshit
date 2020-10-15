@@ -36,8 +36,10 @@ function Pen(config = null) {
     }
 
     function finish(x, y, ctx, e) {
+        if (!isDown) return;
         context.closePath();
         isDown = false;
+        context.store();
     }
 
     return {
@@ -71,8 +73,10 @@ function Pen(config = null) {
                 context.stroke();
             }
         },
-        onMouseOut: finish,
-        onMouseUp: finish
+        onMouseUp: finish,
+        onMouseOut: (x, y, ctx, e) => {
+            if (isDown) finish();
+        }
     }
 }
 
@@ -92,12 +96,16 @@ function Eraser(config = null) {
     }
 
     function finish(x, y, ctx, e) {
+        if (!isDown) return;
+
         context.closePath();
         isDown = false;
         if (mode === "super" || context.psUnderColor === psData.transparent) {
             context.globalCompositeOperation = cache['globalCompositeOperation']
             context.strokeStyle = cache['strokeStyle']
         }
+
+        context.store();
     }
 
     return {
@@ -220,6 +228,7 @@ function Filter(config = null) {
     var context = null;
     var imgdata = null;
     let onbindcb = null;
+    var changed = false;
 
     function render(image) {
         const imageData = new ImageData(
@@ -282,10 +291,15 @@ function Filter(config = null) {
             imgdata = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
             origin = [...imgdata.data];  // 原始数据存下来
             if (onbindcb) onbindcb(context);
+            changed = false;
+        },
+        onUnBind() {
+            if(changed) context.store();
         },
         use: (effect) => {
             if (!imgdata) return;
             filters[effect]();
+            changed = true;
         }
     }
 }
@@ -294,6 +308,7 @@ function Adjust(config = null) {
 
     var context = null;
     var autoApply = false;
+    var changed = false;
     var img = false;
 
     function render(image) {
@@ -318,10 +333,14 @@ function Adjust(config = null) {
             context = ctx;
             img = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
             if (onbindcb) onbindcb();
+            changed = false;
+        },
+        onUnBind() {
+            if (changed) context.store();
         },
         adjust: (options) => {
 
-            if (!img) return;
+            if (!img || options.length === 0) return;
 
             Jimp.read(img, (err, image) => {
                 if (err) throw err;
@@ -331,6 +350,9 @@ function Adjust(config = null) {
 
                 render(image)
             });
+
+            // 标记一下已更改
+            changed = true
         }
     }
 }
