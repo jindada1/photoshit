@@ -89,8 +89,6 @@ Vue.component('ps-canvas', {
                 self.currentImgIndex = this.psCache.length - 1;
                 // 最多缓存 20 步
                 if (this.psCache.length > 20) this.psCache.shift();
-
-                console.log(this.psCache.length);
             };
 
             let initialization = {

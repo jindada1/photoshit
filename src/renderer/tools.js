@@ -160,7 +160,6 @@ function Eraser(config = null) {
 
 function See(config = null) {
 
-    var isDown = false;
     var context = null;
 
     return {
@@ -173,23 +172,13 @@ function See(config = null) {
         },
         onBind: (ctx) => {
             context = ctx;
-            console.log('See bind with context')
-        },
-        onMouseDown: (x, y, ctx, e) => {
-            isDown = true;
+            // console.log('See bind with context')
         },
         onMouseMove: (x, y, ctx, e) => {
-            if (isDown) {
-
-            }
+            
         },
         onMouseOut: (x, y, ctx, e) => {
 
-            isDown = false;
-        },
-        onMouseUp: (x, y, ctx, e) => {
-
-            isDown = false;
         }
     }
 }

@@ -6,7 +6,7 @@ Vue.component('ps-window', {
         <div style="display: flex; flex-direction: row; height: 100%;">\
             <div style="flex: 0 0 120px;">\
                 <el-menu style="border-right: none" @select="toolSelected" :default-active="currentToolIndex">\
-                    <el-menu-item v-for="(tool, index) in tools" :index="index.toString()" :key="tool.name">\
+                    <el-menu-item v-for="(tool, index) in tools" :index="index.toString()" :key="tool.name" :disabled="tool.disabled">\
                         <i :class="tool.icon"></i>\
                         <span slot="title">{{tool.title}}</span>\
                     </el-menu-item>\
@@ -53,37 +53,43 @@ Vue.component('ps-window', {
                     title: '查看',
                     icon: 'el-icon-view',
                     name: 'see',
-                    handler: See()
+                    handler: See(),
+                    disabled: false
                 },
                 {
                     title: '画笔',
                     icon: 'el-icon-edit',
                     name: 'pen',
-                    handler: Pen()
+                    handler: Pen(),
+                    disabled: false
                 },
                 {
                     title: '橡皮',
                     icon: 'el-icon-smoking',
                     name: 'eraser',
-                    handler: Eraser()
+                    handler: Eraser(),
+                    disabled: false
                 },
                 {
                     title: '调整',
                     icon: 'el-icon-set-up',
                     name: 'adjust',
-                    handler: Adjust()
+                    handler: Adjust(),
+                    disabled: false
                 },
                 {
                     title: '滤镜',
                     icon: 'el-icon-film',
                     name: 'ps-filter',
-                    handler: Filter()
+                    handler: Filter(),
+                    disabled: false
                 },
                 {
                     title: '裁剪',
                     icon: 'el-icon-scissors',
                     name: 'cut',
-                    handler: Cut()
+                    handler: Cut(),
+                    disabled: true
                 },
             ],
             currentToolIndex: '0',
