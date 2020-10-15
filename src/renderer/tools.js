@@ -216,29 +216,75 @@ function Cut(config = null) {
 
 function Filter(config = null) {
 
-    var isDown = false;
     var context = null;
+    var imgdata = null;
+    let onbindcb = null;
+
+    function render(image) {
+        const imageData = new ImageData(
+            Uint8ClampedArray.from(image.bitmap.data),
+            image.bitmap.width,
+            image.bitmap.height
+        );
+        context.putImageData(imageData, 0, 0);
+    }
+
+    var filters = {
+        origin: () => {
+            var data = imgdata.data;
+            for (var i = 0; i < data.length; i++) {
+                data[i] = origin[i]
+            }
+            context.putImageData(imgdata, 0, 0);
+        },
+        sepia: () => {
+            for (var i = 0; i < imgdata.height * imgdata.width; i++) {
+                var r = origin[i * 4],
+                    g = origin[i * 4 + 1],
+                    b = origin[i * 4 + 2];
+
+                var newR = 0.393 * r + 0.769 * g + 0.189 * b;
+                var newG = 0.349 * r + 0.686 * g + 0.168 * b;
+                var newB = 0.272 * r + 0.534 * g + 0.131 * b;
+                var rgbArr = [newR, newG, newB].map(e => {
+                    return e < 0 ? 0 : e > 255 ? 255 : e;
+                });
+                [imgdata.data[i * 4], imgdata.data[i * 4 + 1], imgdata.data[i * 4 + 2]] = rgbArr;
+            }
+            context.putImageData(imgdata, 0, 0);
+        },
+        contrast: () => {
+            Jimp.read(imgdata, (err, image) => {
+                if (err) throw err;
+                image.contrast(0.2);
+                render(image)
+            });
+        },
+        grayscale: () => {
+            var data = imgdata.data;
+            for (var i = 0; i < data.length; i += 4) {
+                var grey = (origin[i] + origin[i + 1] + origin[i + 2]) / 3;
+                data[i] = data[i + 1] = data[i + 2] = grey;
+                data[i + 3] = origin[i + 3]
+            }
+            context.putImageData(imgdata, 0, 0);
+        }
+    }
 
     return {
+        addbindEvent(callback) {
+            onbindcb = callback;
+        },
         onBind: (ctx) => {
             // console.log('裁剪模式');
             context = ctx;
+            imgdata = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+            origin = [...imgdata.data];  // 原始数据存下来
+            if (onbindcb) onbindcb(context);
         },
-        onMouseDown: (x, y, ctx, e) => {
-            isDown = true;
-        },
-        onMouseMove: (x, y, ctx, e) => {
-            if (isDown) {
-
-            }
-        },
-        onMouseOut: (x, y, ctx, e) => {
-
-            isDown = false;
-        },
-        onMouseUp: (x, y, ctx, e) => {
-
-            isDown = false;
+        use: (effect) => {
+            if (!imgdata) return;
+            filters[effect]();
         }
     }
 }
@@ -246,7 +292,6 @@ function Filter(config = null) {
 function Adjust(config = null) {
 
     var context = null;
-    var canvasId = null;
     var autoApply = false;
     var img = false;
 
@@ -270,13 +315,12 @@ function Adjust(config = null) {
         },
         onBind: (ctx) => {
             context = ctx;
-            canvasId = context.canvas.id;
             img = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
             if (onbindcb) onbindcb();
         },
         adjust: (options) => {
-            
-            if(!img) return;
+
+            if (!img) return;
 
             Jimp.read(img, (err, image) => {
                 if (err) throw err;

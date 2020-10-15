@@ -108,14 +108,6 @@ Vue.component("cut", {
     template: '<p>Hello {{name}}</p>'
 });
 
-Vue.component("ps-filter", {
-    props: {
-        name: String,
-        instance: Object,
-    },
-    template: '<p>Hello {{name}}</p>'
-});
-
 Vue.component("adjust", {
     template: '\
     <div style="padding: 0 15px;">\
@@ -283,5 +275,65 @@ Vue.component("eraser", {
         // console.log('eraser mounted');
         this.eraser.config('lineWidth', this.size);
         this.eraser.switchMode(this.eraserMode);
+    }
+});
+
+Vue.component("ps-filter", {
+    props: {
+        name: String,
+        instance: Object,
+    },
+    template: '\
+    <div style="padding: 0 15px; font-size:14px;">\
+        <el-divider content-position="center">效果预览</el-divider>\
+        <div style="margin-right: -5px">\
+            <div v-for="filter in filters" :key="filter.title" class="ps-img-card" @click="filterClicked(filter)">\
+                <div style="margin: 6px">\
+                    <img :style="{filter: filter.value}" :src="imgsrc">\
+                </div>\
+                <div style="margin: 6px; text-align:center">{{filter.title}}</div>\
+            </div>\
+        </div>\
+    </div>\
+    ',
+    data() {
+        return {
+            filter: this.instance,
+            imgsrc: "https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png",
+            filters: [
+                {
+                    title: '原图',
+                    value: 'none',
+                    method: 'origin',
+                },
+                {
+                    title: '复古',
+                    value: 'sepia(1)',
+                    method: 'sepia',
+                },
+                {
+                    title: '灰度',
+                    value: 'grayscale(1)',
+                    method: 'grayscale',
+                },
+                {
+                    title: '鲜艳',
+                    value: 'contrast(2);',
+                    method: 'contrast',
+                },
+            ]
+        }
+    },
+    methods: {
+        filterClicked(effect) {
+            this.filter.use(effect.method)
+        },
+        onShow(ctx) {
+            this.imgsrc = ctx.canvas.toDataURL("image/jpg");
+        }
+    },
+    mounted() {
+        // console.log('filters mounted');
+        this.filter.addbindEvent(this.onShow);
     }
 });

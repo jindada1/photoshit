@@ -22,6 +22,7 @@ body {
 
 .el-carousel__item {
     overflow-y: auto;
+    background-color: white;
 }
 
 .el-carousel__item::-webkit-scrollbar {
@@ -139,4 +140,24 @@ body {
 
 .ps-canvas-container::-webkit-scrollbar-track {
     background-color: transparent;
+}
+
+.ps-img-card {
+    width: calc(50% - 7px);
+    display: inline-block;
+    border-radius: 4px;
+    border: lightgray solid 1px;
+    margin: 0 5px 5px 0;
+}
+
+.ps-img-card:hover {
+    cursor: pointer;
+    color: #409EFF;
+    border-color: #409EFF;
+}
+
+.ps-img-card img {
+    object-fit: scale-down; 
+    max-width: 100%; 
+    max-height: 100%;
 }
