@@ -35,6 +35,11 @@ function Pen(config = null) {
         lineJion: "round",
     }
 
+    function finish(x, y, ctx, e) {
+        context.closePath();
+        isDown = false;
+    }
+
     return {
         // 控制组件初始化时把ui数据同步进来，此时未应用到公共 context 上
         config: (key, value) => {
@@ -66,16 +71,8 @@ function Pen(config = null) {
                 context.stroke();
             }
         },
-        onMouseOut: (x, y, ctx, e) => {
-            // 当鼠标移出画布区域时,创建从当前点回到起始点的路径
-            context.closePath();
-            isDown = false;
-        },
-        onMouseUp: (x, y, ctx, e) => {
-            // 当鼠标抬起时,创建从当前点回到起始点的路径
-            context.closePath();
-            isDown = false;
-        }
+        onMouseOut: finish,
+        onMouseUp: finish
     }
 }
 
@@ -84,7 +81,7 @@ function Eraser(config = null) {
     var isDown = false;
     var context = null;
     var mode = null;
-    var transparent = 'rgba(0,0,0,0)';
+    // var transparent = 'rgba(0,0,0,0)';
     var cache = {}
 
     var configuratins = {
@@ -92,6 +89,15 @@ function Eraser(config = null) {
         lineCap: "round",
         // 设置两条线相交时，所创建的拐角类型
         lineJion: "round"
+    }
+
+    function finish(x, y, ctx, e) {
+        context.closePath();
+        isDown = false;
+        if (mode === "super" || context.psUnderColor === psData.transparent) {
+            context.globalCompositeOperation = cache['globalCompositeOperation']
+            context.strokeStyle = cache['strokeStyle']
+        }
     }
 
     return {
@@ -124,7 +130,7 @@ function Eraser(config = null) {
             // 把路径移动到画布中的指定点，不创建线条
             context.moveTo(x, y);
 
-            if (mode === "super" || context.psUnderColor === transparent) {
+            if (mode === "super" || context.psUnderColor === psData.transparent) {
                 // console.log(context);
                 cache['globalCompositeOperation'] = context.globalCompositeOperation;
                 cache['strokeStyle'] = context.strokeStyle;
@@ -139,24 +145,8 @@ function Eraser(config = null) {
                 context.stroke();
             }
         },
-        onMouseOut: (x, y, ctx, e) => {
-            // 当鼠标移出画布区域时,创建从当前点回到起始点的路径
-            context.closePath();
-            isDown = false;
-            if (mode === "super" || context.psUnderColor === transparent) {
-                context.globalCompositeOperation = cache['globalCompositeOperation']
-                context.strokeStyle = cache['strokeStyle']
-            }
-        },
-        onMouseUp: (x, y, ctx, e) => {
-            // 当鼠标抬起时,创建从当前点回到起始点的路径
-            context.closePath();
-            isDown = false;
-            if (mode === "super" || context.psUnderColor === transparent) {
-                context.globalCompositeOperation = cache['globalCompositeOperation']
-                context.strokeStyle = cache['strokeStyle']
-            }
-        }
+        onMouseOut: finish,
+        onMouseUp: finish
     }
 }
 

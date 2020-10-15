@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>创建新作品</title>
     <link rel="stylesheet" type="text/css" href="../cdn/element-ui/element.css">
-    <link rel="stylesheet" type="text/css" href="../subwindow/css/subwindow.css">
+    <link rel="stylesheet" type="text/css" href="../subwindow/create_canvas.css">
 </head>
 
 <body>
@@ -37,10 +37,12 @@
                             </el-input>
                         </el-form-item>
                         <el-divider content-position="center">底色</el-divider>
+                        <el-form-item label="透明底色">
+                            <el-switch v-model="isTransparent"> </el-switch>
+                        </el-form-item>
                         <el-form-item label="颜色选择">
                             <el-col :span="4">
-                                <el-color-picker size="medium" v-model="canvas.undercolor" show-alpha
-                                    :predefine="predefineColors">
+                                <el-color-picker size="medium" v-model="color" :predefine="predefineColors">
                                 </el-color-picker>
                             </el-col>
                             <el-col :span="20"> {{canvas.undercolor}} </el-col>
@@ -87,10 +89,10 @@
 <script src="../cdn/element-ui/element.js"></script>
 <script src="../cdn/axios.min.js"></script>
 <script src="../cdn/qrcode.min.js"></script>
+<script src="../renderer/global.js"></script>
 
 <script>
     const { remote } = require('electron');
-    const ipcRenderer = require('electron').ipcRenderer
 
     const createTypes = {
         board: 'board',
@@ -112,6 +114,8 @@
             return {
                 visible: false,
                 createType: createTypes.board,
+                color: '#ffffff',
+                isTransparent: false,
                 canvas: {
                     width: '400',
                     height: '400',
@@ -137,7 +141,6 @@
                     '#1e90ff',
                     '#c71585',
                     '#000000',
-                    'rgba(255, 255, 255, 0)',
                 ],
                 image: {
                     path: null
@@ -147,6 +150,14 @@
                 noqr: true,
                 qrcode: null,
                 lastTimeout: null
+            }
+        },
+        watch: {
+            isTransparent: function (val) {
+                this.canvas.undercolor = val ? psData.transparent : this.color;
+            },
+            color: function (val) {
+                this.canvas.undercolor = this.isTransparent ? psData.transparent : this.color;
             }
         },
         methods: {

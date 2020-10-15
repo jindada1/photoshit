@@ -65,7 +65,7 @@ Vue.component("pen", {
     data() {
         return {
             pen: this.instance,
-            color: '#00ff00',
+            color: '#000000',
             lineWidth: 3,
             maxLineWidth: 40,
             predefineColors: [
@@ -251,7 +251,7 @@ Vue.component("eraser", {
             modes: [
                 {
                     name: "normal",
-                    tip: "擦过的地方保留底色",
+                    tip: "用底色覆盖",
                     title: "普通橡皮",
                     ok: true
                 },

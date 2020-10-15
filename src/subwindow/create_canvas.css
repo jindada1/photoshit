@@ -32,10 +32,6 @@
     box-sizing: border-box;
 }
 
-.el-form-item {
-    margin-bottom: 30px;
-}
-
 .el-input-group__append {
     background-color: white;
     color: black;

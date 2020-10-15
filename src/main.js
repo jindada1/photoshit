@@ -108,5 +108,5 @@ ipc.on('open-imagefile', (event, arg) => {
     if (data.filePaths.length) {
       createCanvasWin.webContents.send('open-image', data.filePaths[0]);
     }
-  });;
+  });
 })

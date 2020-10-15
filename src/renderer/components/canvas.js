@@ -20,6 +20,23 @@ Vue.component('ps-canvas', {
     computed: {
     },
     methods: {
+        clear() {
+            if (this.context['psUnderColor'] === psData.transparent) {
+                let cache = {
+                    globalCompositeOperation: this.context.globalCompositeOperation,
+                    strokeStyle: this.context.strokeStyle
+                }
+                this.context.globalCompositeOperation = 'destination-out';
+                this.context.fillStyle = '#ffffff';
+                this.context.fillRect(0, 0, this.width, this.height);
+                this.context.globalCompositeOperation = cache['globalCompositeOperation']
+                this.context.fillStyle = cache['strokeStyle']
+            }
+            else this.clearBoard();
+        },
+        imageData() {
+            return this.context.canvas.toDataURL('image/jpg', 0.8);
+        },
         setHandler(handler = null) {
             if (handler) {
                 this.handler = handler;
@@ -36,7 +53,7 @@ Vue.component('ps-canvas', {
         },
         addCustomProperty() {
             // ps 夹带的私货在这里装车（装进 context）
-            this.context['psUnderColor'] = 'rgba(0,0,0,0)';
+            this.context['psUnderColor'] = psData.transparent;
         },
         init(meta) {
             this.context = this.$refs.board.getContext("2d");
@@ -125,10 +142,6 @@ Vue.component('ps-canvas', {
                 if (!self.handler.hasOwnProperty('onMouseUp')) return;
                 self.handler.onMouseUp(e.clientX - left, e.clientY - top, ctx, e)
             })
-
-            // $(".clear").click(function() {
-            //     ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height); //创建一个等大画布覆盖
-            // });
             // $(".reset").click(function() {
             //     if (imgs.length > -1) {
             //         ctx.putImageData(imgs.pop(), 0, 0); //删除图像数组最后一位
