@@ -51,56 +51,37 @@ Vue.component('ps-canvas', {
                     onMouseUp: (e) => console.log('mouseup')
                 }
         },
-        addCustomProperty() {
-            // ps 夹带的私货在这里装车（装进 context）
-            this.context['psUnderColor'] = psData.transparent;
-        },
         init(meta) {
             this.context = this.$refs.board.getContext("2d");
-            this.addCustomProperty();
 
-            switch (meta.type) {
-                case 'board':
-                    this.setBoard(meta);
-                    break;
-
-                case 'image':
-                    this.setImage(meta);
-                    break;
-
-                default:
-                    break;
-            }
-            // 绑定鼠标事件
-            this.bindEvents();
-        },
-        setBoard(meta) {
             this.width = meta.width;
             this.height = meta.height;
             this.context['psUnderColor'] = meta.undercolor;
 
-            let self = this;
+            let initialization = {
+                board: this.clearBoard,
+                image: this.setImage
+            }
+
             // canvas每当高度或宽度被重设时，画布内容就会被清空，一定要在渲染完成（宽高设定好）后去操作
             Vue.nextTick(function () {
-                // console.log('nexttick in canvas');
-                self.clearBoard();
+                initialization[meta.type](meta);
             })
-        },
-        setImage(meta) {
-            var img = new Image();
-            let self = this;
-            img.onload = function () {
-                self.width = this.width;
-                self.height = this.height;
-                Vue.nextTick(function () {
-                    self.context.drawImage(img, 0, 0);
-                })
-            };
-            img.src = meta.path;
+            
+            // 绑定鼠标事件
+            this.bindEvents();
         },
         clearBoard() {
             this.context.fillStyle = this.context['psUnderColor'];
             this.context.fillRect(0, 0, this.width, this.height);     // 绘制矩形，填充的默认颜色为黑色
+        },
+        setImage(meta) {
+            var img = new Image();
+            let context = this.context;
+            img.onload = function () {
+                context.drawImage(img, 0, 0);
+            };
+            img.src = meta.path;
         },
         bindEvents() {
             // 设置默认事件处理器

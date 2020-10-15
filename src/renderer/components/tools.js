@@ -28,7 +28,7 @@ Vue.component("see", {
         let self = this;
         // see 这个组件比 window 更先渲染，而 self.canvas 对象是在 window 渲染结束后才获取 context。
         Vue.nextTick(() => {
-            // console.log('nexttick in see');
+            // console.log('see get from See');
             self.info = self.canvas.info();
         })
     }

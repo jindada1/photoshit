@@ -165,6 +165,7 @@ function See(config = null) {
         },
         onBind: (ctx) => {
             context = ctx;
+            console.log('See bind with context')
         },
         onMouseDown: (x, y, ctx, e) => {
             isDown = true;
