@@ -28,6 +28,9 @@ function Pen(config = null) {
     var isDown = false;
     var context = null;
 
+    var points = [];
+    var lx, ly = 0;
+
     var configuratins = {
         // 线条的结束端点样式
         lineCap: "round",
@@ -40,6 +43,31 @@ function Pen(config = null) {
         context.closePath();
         isDown = false;
         context.store();
+        drawCurve();
+    }
+
+    function tryaddpoint(x, y) {
+        if (Math.abs(x - lx) + Math.abs(y - ly) < 50) return;
+
+        lx = x;
+        ly = y;
+        points.push({ x, y });
+    }
+
+    function drawCurve() {
+        
+        context.strokeStyle = "#00ff00";
+        // move to the first point
+        context.moveTo(points[0].x, points[0].y);
+
+        for (var i = 1; i < points.length - 2; i++) {
+            var xc = (points[i].x + points[i + 1].x) / 2;
+            var yc = (points[i].y + points[i + 1].y) / 2;
+            context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        }
+        // curve through the last two points
+        // context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+        context.stroke();
     }
 
     return {
@@ -65,12 +93,17 @@ function Pen(config = null) {
             context.beginPath();
             // 把路径移动到画布中的指定点，不创建线条
             context.moveTo(x, y);
+
+            points = [{ x, y }];
+            lx = x;
+            ly = y;
         },
         onMouseMove: (x, y, ctx, e) => {
             if (isDown) {
                 // 添加一个新点，在画布中创建从该点到最后指定点的线条
                 context.lineTo(x, y);
                 context.stroke();
+                tryaddpoint(x, y);
             }
         },
         onMouseUp: finish,
@@ -175,7 +208,7 @@ function See(config = null) {
             // console.log('See bind with context')
         },
         onMouseMove: (x, y, ctx, e) => {
-            
+
         },
         onMouseOut: (x, y, ctx, e) => {
 
@@ -283,7 +316,7 @@ function Filter(config = null) {
             changed = false;
         },
         onUnBind() {
-            if(changed) context.store();
+            if (changed) context.store();
         },
         use: (effect) => {
             if (!imgdata) return;
