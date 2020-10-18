@@ -309,6 +309,9 @@ function Filter(config = null) {
             context.putImageData(imgdata, 0, 0);
         },
         contrast: () => {
+            for (var i = 0; i < origin.length; i++) {
+                imgdata.data[i] = origin[i]
+            }
             Jimp.read(imgdata, (err, image) => {
                 if (err) throw err;
                 image.contrast(0.2);
