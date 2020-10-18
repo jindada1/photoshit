@@ -54,8 +54,12 @@ Vue.component("pen", {
         </div>\
         <el-slider v-model="lineWidth" :min="1" :max="maxLineWidth" @change="widthChanged"></el-slider>\
         <el-divider content-position="center">美化</el-divider>\
-        <el-switch v-model="smoothLine"  disabled active-text="曲线平滑"></el-switch>\
-        <el-switch v-model="shapeDetect" disabled active-text="形状识别"></el-switch>\
+        <div style="margin-bottom: 20px;">\
+            <el-switch v-model="smoothLine" @change="switchSmooth" active-text="曲线平滑"></el-switch>\
+        </div>\
+        <div style="margin-bottom: 20px;">\
+            <el-switch v-model="shapeDetect" disabled active-text="形状识别"></el-switch>\
+        </div>\
     </div>\
     ',
     props: {
@@ -85,6 +89,9 @@ Vue.component("pen", {
         }
     },
     methods: {
+        switchSmooth(val) {
+            this.pen.setSmooth(val);
+        },
         colorSelected(color) {
             this.color = color;
             this.pen.set('strokeStyle', color);

@@ -28,6 +28,8 @@ function Pen(config = null) {
     var isDown = false;
     var context = null;
 
+    var smoothLine = false;
+    var imgdata = null;
     var points = [];
     var lx, ly = 0;
 
@@ -42,8 +44,38 @@ function Pen(config = null) {
         if (!isDown) return;
         context.closePath();
         isDown = false;
+        if (smoothLine) {
+            context.putImageData(imgdata, 0, 0);
+            // 把终点加进来
+            points.push({ x, y });
+            drawCurve();
+            // drawPoints();
+        }
         context.store();
-        drawCurve();
+    }
+
+    function drawPoints(params) {
+        for (const point of points) {
+            context.beginPath();
+            context.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+            context.stroke();
+            context.closePath();
+        }
+    }
+
+    function drawCurve() {
+        // move to the first point
+        context.moveTo(points[0].x, points[0].y);
+        context.beginPath();
+        for (var i = 0; i < points.length - 2; i++) {
+            var xc = (points[i].x + points[i + 1].x) / 2;
+            var yc = (points[i].y + points[i + 1].y) / 2;
+            context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        }
+        // curve through the last two points
+        context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+        context.stroke();
+        context.closePath();
     }
 
     function tryaddpoint(x, y) {
@@ -54,23 +86,10 @@ function Pen(config = null) {
         points.push({ x, y });
     }
 
-    function drawCurve() {
-        
-        context.strokeStyle = "#00ff00";
-        // move to the first point
-        context.moveTo(points[0].x, points[0].y);
-
-        for (var i = 1; i < points.length - 2; i++) {
-            var xc = (points[i].x + points[i + 1].x) / 2;
-            var yc = (points[i].y + points[i + 1].y) / 2;
-            context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
-        }
-        // curve through the last two points
-        // context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
-        context.stroke();
-    }
-
     return {
+        setSmooth: (val) => {
+            smoothLine = val;
+        },
         // 控制组件初始化时把ui数据同步进来，此时未应用到公共 context 上
         config: (key, value) => {
             configuratins[key] = value;
@@ -93,17 +112,21 @@ function Pen(config = null) {
             context.beginPath();
             // 把路径移动到画布中的指定点，不创建线条
             context.moveTo(x, y);
-
-            points = [{ x, y }];
-            lx = x;
-            ly = y;
+            // 如果开启曲线平滑，记录起点，记录当前画布状态
+            if (smoothLine) {
+                imgdata = context.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+                points = [{ x, y }];
+                lx = x;
+                ly = y;
+            }
         },
         onMouseMove: (x, y, ctx, e) => {
             if (isDown) {
                 // 添加一个新点，在画布中创建从该点到最后指定点的线条
                 context.lineTo(x, y);
                 context.stroke();
-                tryaddpoint(x, y);
+                // 如果开启曲线平滑，添加点
+                if(smoothLine) tryaddpoint(x, y);
             }
         },
         onMouseUp: finish,
