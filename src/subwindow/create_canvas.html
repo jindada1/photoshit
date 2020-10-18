@@ -189,10 +189,8 @@
             },
             getLoop(uri, times, seconds) {
 
-                let self = this;
-
                 if (times < 1) {
-                    self.warn('二维码已过期');
+                    this.warn('二维码已过期');
                     return;   // 不再尝试
                 }
 
@@ -201,17 +199,21 @@
                 }
 
                 axios.get(uri)
-                    .then(function (response) {
+                    .then((response) => {
                         if (response.data === 'no') {
-                            self.lastTimeout = setTimeout(() => {
-                                self.getLoop(uri, times - 1, seconds);
+                            this.lastTimeout = setTimeout(() => {
+                                this.getLoop(uri, times - 1, seconds);
                             }, 1000 * seconds + 500);
                         }
                         else {
-                            self.sendMain({
-                                type: createTypes.image,
-                                path: uri
-                            })
+                            let self = this;
+                            this.$refs.imageDom.onload = function () {
+                                self.image.width = this.naturalWidth;
+                                self.image.height = this.naturalHeight;
+                                self.image.type = createTypes.image;
+                                self.sendMain(self.image)
+                            }
+                            self.image.path = uri;
                         }
                     });
             },

@@ -12,7 +12,7 @@
     "lint": "eslint src --color"
   },
   "keywords": [],
-  "author": "zou_4",
+  "author": "Kris Huang",
   "license": "MIT",
   "config": {
     "forge": {
@@ -29,7 +29,8 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "yarn"
+        "packageManager": "yarn",
+        "icon": "src/images/icon"
       },
       "electronWinstallerConfig": {
         "name": "photoshit"
@@ -37,11 +38,11 @@
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
       "github_repository": {
-        "owner": "",
-        "name": ""
+        "owner": "Kris",
+        "name": "Kris Huang"
       },
       "windowsStoreConfig": {
-        "packageName": "",
+        "packageName": "PhotoShit",
         "name": "photoshit"
       }
     }

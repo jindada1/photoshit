@@ -27,8 +27,8 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  mainWindow.webContents.openDevTools();
-  // mainWindow.setMenu(null)
+  // mainWindow.webContents.openDevTools();
+  mainWindow.setMenu(null);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
