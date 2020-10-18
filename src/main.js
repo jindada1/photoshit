@@ -74,7 +74,7 @@ const ipc = require('electron').ipcMain
 
 let createCanvasWin;
 
-ipc.on('add', () => {
+ipc.on('open-create-window', () => {
   if (createCanvasWin) return;
   createCanvasWin = new BrowserWindow({
     width: 400,
@@ -94,19 +94,4 @@ ipc.on('add', () => {
 
 ipc.on('create-canvas', (event, arg) => {
   mainWindow.webContents.send('add-canvas', arg);
-})
-
-ipc.on('open-imagefile', (event, arg) => {
-
-  dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [{
-      name: 'Images',
-      extensions: ['jpg', 'png']
-    }]
-  }).then((data) => {
-    if (data.filePaths.length) {
-      createCanvasWin.webContents.send('open-image', data.filePaths[0]);
-    }
-  });
 })

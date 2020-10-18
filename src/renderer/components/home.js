@@ -18,7 +18,7 @@ Vue.component('ps-home', {
     },
     methods: {
         create() {
-            ipcRenderer.send('add');
+            ipcRenderer.send('open-create-window');
         }
     },
     mounted() {

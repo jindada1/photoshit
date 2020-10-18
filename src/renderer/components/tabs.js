@@ -29,7 +29,7 @@ Vue.component('ps-tabs', {
     },
     methods: {
         tabClicked(tab) {
-            if (tab.name === 'add') ipcRenderer.send('add');
+            if (tab.name === 'add') ipcRenderer.send('open-create-window');
         },
         addTab(meta) {
             let newTabName = ++this.tabIndex + '';

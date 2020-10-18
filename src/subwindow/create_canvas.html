@@ -216,18 +216,28 @@
                     });
             },
             openBrowser() {
-                ipcRenderer.send('open-imagefile');
+                remote.dialog.showOpenDialog({
+                    properties: ['openFile'],
+                    filters: [{
+                        name: 'Images',
+                        extensions: ['jpg', 'png']
+                    }]
+                }).then((data) => {
+                    if (data.filePaths.length) {
+                        console.log(this);
+                        this.loadImage(data.filePaths[0])
+                    }
+                });
             },
             openWeb() {
-                let self = this;
                 axios.get(this.imageUrl)
-                    .then(function (response) {
+                    .then((response) => {
                         let ctype = response.headers['content-type'];
                         if (formatCorrect(ctype)) {
-                            self.loadImage(self.imageUrl);
+                            this.loadImage(this.imageUrl);
                         }
                         else {
-                            self.warn('仅支持 jpeg/png 的图片链接')
+                            this.warn('仅支持 jpeg/png 的图片链接')
                         }
                     });
             },
@@ -335,10 +345,6 @@
         },
         mounted() {
             this.enableDragIn();
-            let self = this;
-            ipcRenderer.on('open-image', (event, image) => {
-                self.loadImage(image);
-            })
             this.qrcode = new QRCode("qrcode", {
                 width: this.qrcodeWidth,
                 height: this.qrcodeWidth,
