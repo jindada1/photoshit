@@ -104,7 +104,7 @@ Vue.component('ps-window', {
     methods: {
         saveCanvas() {
             dialog.showSaveDialog({
-                title: 'Testing a save dialog',
+                title: '保存图片',
                 defaultPath: 'image.jpg'
             }).then((data) => {
                 // Get the DataUrl from the Canvas
