@@ -135,7 +135,7 @@ body {
 }
 
 .ps-canvas-container::-webkit-scrollbar-thumb {
-    background-color: gray;
+    background-color: lightgray;
 }
 
 .ps-canvas-container::-webkit-scrollbar-track {
